@@ -1,3 +1,5 @@
+import scala.collection.immutable.IndexedSeq
+
 class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
 
   import BloomFilter._
@@ -5,21 +7,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
   private val bits = new UnsafeBitArray(numberOfBits)
 
   def add(x: T): Unit = {
-
-    // TODO port murmurmur
-    val hash: Array[Byte] = Array[Byte]()
-    val hash1: Long = lowerEight(hash)
-    val hash2: Long = upperEight(hash)
-
-    for {
-      i <- 0 to numberOfHashes
-    } {
-      // TODO seed the next hash?
-      val h = hash1 + i * hash2
-      val nextHash = if (h < 0) ~h else h
-      val index = nextHash % numberOfBits
-      bits.set(index)
-    }
+    getBits(x).foreach(bits.set)
   }
 
   def checkAndAdd(x: T): Boolean = {
@@ -27,11 +15,28 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
   }
 
   def mightContain(x: T): Boolean = {
-    false
+    getBits(x).forall(bits.get)
   }
 
   def expectedFalsePositiveRate(): Double = {
-    0
+    math.pow(bits.getBitCount / numberOfBits, numberOfHashes)
+  }
+
+  private def getBits(x: T): IndexedSeq[Long] = {
+    // TODO port murmurmur
+    val hash: Array[Byte] = Array[Byte]()
+    val hash1: Long = lowerEight(hash)
+    val hash2: Long = upperEight(hash)
+
+    for {
+      i <- 0 to numberOfHashes
+    } yield {
+      // TODO seed the next hash?
+      val h = hash1 + i * hash2
+      val nextHash = if (h < 0) ~h else h
+      nextHash % numberOfBits
+    }
+
   }
 
 }

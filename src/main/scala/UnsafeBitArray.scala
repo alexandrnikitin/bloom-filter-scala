@@ -13,4 +13,6 @@ class UnsafeBitArray(numberOfBits: Long) {
     val long = unsafe.getLong(offset)
     unsafe.putLong(offset, long | (1L << index))
   }
+
+  def getBitCount: Long = 0
 }
