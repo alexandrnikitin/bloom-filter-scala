@@ -10,10 +10,6 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
     getBits(x).foreach(bits.set)
   }
 
-  def checkAndAdd(x: T): Boolean = {
-    false
-  }
-
   def mightContain(x: T): Boolean = {
     getBits(x).forall(bits.get)
   }
