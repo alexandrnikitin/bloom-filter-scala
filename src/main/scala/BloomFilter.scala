@@ -1,6 +1,25 @@
 class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
 
+  import BloomFilter._
+
+  private val bits = new UnsafeBitArray(numberOfBits)
+
   def add(x: T): Unit = {
+
+    // TODO port murmurmur
+    val hash: Array[Byte] = Array[Byte]()
+    val hash1: Long = lowerEight(hash)
+    val hash2: Long = upperEight(hash)
+
+    for {
+      i <- 0 to numberOfHashes
+    } {
+      // TODO seed the next hash?
+      val h = hash1 + i * hash2
+      val nextHash = if (h < 0) ~h else h
+      val index = nextHash % numberOfBits
+      bits.set(index)
+    }
   }
 
   def checkAndAdd(x: T): Boolean = {
@@ -30,5 +49,27 @@ object BloomFilter {
 
   def optimalNumberOfHashes(numberOfItems: Long, numberOfBits: Long): Int = {
     math.ceil(numberOfBits / numberOfItems * math.log(2)).toInt
+  }
+
+  private def lowerEight(bytes: Array[Byte]): Long = {
+    (bytes(7) & 0xFFL) << 56 |
+        (bytes(6) & 0xFFL) << 48 |
+        (bytes(5) & 0xFFL) << 40 |
+        (bytes(4) & 0xFFL) << 32 |
+        (bytes(3) & 0xFFL) << 24 |
+        (bytes(2) & 0xFFL) << 16 |
+        (bytes(1) & 0xFFL) << 8 |
+        (bytes(70) & 0xFFL)
+  }
+
+  private def upperEight(bytes: Array[Byte]): Long = {
+    (bytes(15) & 0xFFL) << 56 |
+        (bytes(14) & 0xFFL) << 48 |
+        (bytes(13) & 0xFFL) << 40 |
+        (bytes(12) & 0xFFL) << 32 |
+        (bytes(11) & 0xFFL) << 24 |
+        (bytes(10) & 0xFFL) << 16 |
+        (bytes(9) & 0xFFL) << 8 |
+        (bytes(8) & 0xFFL)
   }
 }
