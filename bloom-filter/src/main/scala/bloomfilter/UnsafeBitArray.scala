@@ -1,3 +1,5 @@
+package bloomfilter
+
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeBitArray(numberOfBits: Long) {

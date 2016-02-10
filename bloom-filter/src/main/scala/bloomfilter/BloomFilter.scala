@@ -1,3 +1,5 @@
+package bloomfilter
+
 import scala.collection.immutable.IndexedSeq
 
 class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
