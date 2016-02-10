@@ -1,16 +1,22 @@
+import pl.project13.scala.sbt.JmhPlugin
 import sbt._
 
 object TheBuild extends Build {
 
-  lazy val root = Project("root", file("."))
+  lazy val root = Project("bloom-filter-root", file("."))
       .aggregate(bloomFilter, benchmark)
+      .configs(Configs.all: _*)
       .settings(Settings.root: _*)
 
   lazy val bloomFilter = Project("bloom-filter", file("bloom-filter"))
+      .configs(Configs.all: _*)
       .settings(Settings.root: _*)
 
   lazy val benchmark = Project("benchmark", file("benchmark"))
-      .settings(Settings.root: _*)
+      .dependsOn(bloomFilter)
+      .configs(Configs.all: _*)
+      .settings(Settings.benchmark: _*)
+      .enablePlugins(JmhPlugin)
 
 }
 
