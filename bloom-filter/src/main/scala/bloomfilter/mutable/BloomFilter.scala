@@ -4,15 +4,15 @@ import bloomfilter.CanGenerateHashFrom
 
 import scala.collection.immutable.IndexedSeq
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
+class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
-  def add(x: T)(implicit canGenerateHash: CanGenerateHashFrom[T]): Unit = {
+  def add(x: T): Unit = {
     getBits(x).foreach(bits.set)
   }
 
-  def mightContain(x: T)(implicit canGenerateHash: CanGenerateHashFrom[T]): Boolean = {
+  def mightContain(x: T): Boolean = {
     getBits(x).forall(bits.get)
   }
 
@@ -20,7 +20,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
     math.pow(bits.getBitCount / numberOfBits, numberOfHashes)
   }
 
-  private def getBits(x: T)(implicit canGenerateHash: CanGenerateHashFrom[T]): IndexedSeq[Long] = {
+  private def getBits(x: T): IndexedSeq[Long] = {
     val pair = canGenerateHash.generateHash(x)
 
     for {
@@ -38,7 +38,9 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
 
 object BloomFilter {
 
-  def apply[T](numberOfItems: Long, falsePositiveRate: Double): BloomFilter[T] = {
+  def apply[T](numberOfItems: Long, falsePositiveRate: Double)(
+      implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
+
     val nb = optimalNumberOfBits(numberOfItems, falsePositiveRate)
     val nh = optimalNumberOfHashes(numberOfItems, nb)
     new BloomFilter[T](nb, nh)
