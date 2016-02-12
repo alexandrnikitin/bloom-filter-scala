@@ -2,6 +2,7 @@ package bloomfilter
 
 import java.util.BitSet
 
+import bloomfilter.mutable.UnsafeBitArray
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
 
 @State(Scope.Benchmark)

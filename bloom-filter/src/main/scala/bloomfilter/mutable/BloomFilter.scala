@@ -1,4 +1,6 @@
-package bloomfilter
+package bloomfilter.mutable
+
+import bloomfilter.CanGenerateHashFrom
 
 import scala.collection.immutable.IndexedSeq
 

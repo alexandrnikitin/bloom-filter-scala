@@ -1,4 +1,4 @@
-package bloomfilter
+package bloomfilter.mutable
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
