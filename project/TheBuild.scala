@@ -12,6 +12,11 @@ object TheBuild extends Build {
       .configs(Configs.all: _*)
       .settings(Settings.root: _*)
 
+  lazy val tests = Project("tests", file("tests"))
+      .dependsOn(bloomFilter)
+      .configs(Configs.all: _*)
+      .settings(Settings.tests: _*)
+
   lazy val benchmark = Project("benchmark", file("benchmark"))
       .dependsOn(bloomFilter)
       .configs(Configs.all: _*)

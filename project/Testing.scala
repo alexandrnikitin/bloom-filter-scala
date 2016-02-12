@@ -20,7 +20,7 @@ object Testing {
   private lazy val btSettings = inConfig(BenchmarkTest)(Defaults.testSettings) ++ Seq(
     fork in BenchmarkTest := false,
     parallelExecution in BenchmarkTest := false,
-    scalaSource in BenchmarkTest := baseDirectory.value / "src/scala"
+    scalaSource in BenchmarkTest := baseDirectory.value / "src/test/scala"
     //testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
     // TODO add JMH test framework
   )
