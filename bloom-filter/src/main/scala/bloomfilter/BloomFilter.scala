@@ -2,9 +2,7 @@ package bloomfilter
 
 import scala.collection.immutable.IndexedSeq
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
-
-  import BloomFilter._
+class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
@@ -21,16 +19,13 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
   }
 
   private def getBits(x: T): IndexedSeq[Long] = {
-    // TODO port murmurmur
-    val hash: Array[Byte] = Array[Byte]()
-    val hash1: Long = lowerEight(hash)
-    val hash2: Long = upperEight(hash)
+    val pair = canGenerateHash.generateHash(x)
 
     for {
       i <- 0 to numberOfHashes
     } yield {
       // TODO seed the next hash?
-      val h = hash1 + i * hash2
+      val h = pair.val1 + i * pair.val2
       val nextHash = if (h < 0) ~h else h
       nextHash % numberOfBits
     }
