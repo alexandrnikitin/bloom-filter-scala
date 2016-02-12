@@ -2,15 +2,15 @@ package bloomfilter
 
 import scala.collection.immutable.IndexedSeq
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
+class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
-  def add(x: T): Unit = {
+  def add(x: T)(implicit canGenerateHash: CanGenerateHashFrom[T]): Unit = {
     getBits(x).foreach(bits.set)
   }
 
-  def mightContain(x: T): Boolean = {
+  def mightContain(x: T)(implicit canGenerateHash: CanGenerateHashFrom[T]): Boolean = {
     getBits(x).forall(bits.get)
   }
 
@@ -18,7 +18,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
     math.pow(bits.getBitCount / numberOfBits, numberOfHashes)
   }
 
-  private def getBits(x: T): IndexedSeq[Long] = {
+  private def getBits(x: T)(implicit canGenerateHash: CanGenerateHashFrom[T]): IndexedSeq[Long] = {
     val pair = canGenerateHash.generateHash(x)
 
     for {
@@ -35,6 +35,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
 }
 
 object BloomFilter {
+
   def apply[T](numberOfItems: Long, falsePositiveRate: Double): BloomFilter[T] = {
     val nb = optimalNumberOfBits(numberOfItems, falsePositiveRate)
     val nh = optimalNumberOfHashes(numberOfItems, nb)
@@ -70,4 +71,6 @@ object BloomFilter {
         (bytes(9) & 0xFFL) << 8 |
         (bytes(8) & 0xFFL)
   }
+
+
 }

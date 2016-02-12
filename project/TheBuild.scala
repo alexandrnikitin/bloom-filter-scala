@@ -4,7 +4,7 @@ import sbt._
 object TheBuild extends Build {
 
   lazy val root = Project("bloom-filter-root", file("."))
-      .aggregate(bloomFilter, benchmark)
+      .aggregate(bloomFilter, tests, benchmark)
       .configs(Configs.all: _*)
       .settings(Settings.root: _*)
 

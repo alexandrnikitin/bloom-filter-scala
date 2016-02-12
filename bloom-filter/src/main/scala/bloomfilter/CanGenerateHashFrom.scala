@@ -2,22 +2,29 @@ package bloomfilter
 
 import bloomfilter.MurmurHash3.LongPair
 
-import scala.annotation.implicitNotFound
-
-@implicitNotFound(msg = "Cannot generate hash for a type ${From}.")
 trait CanGenerateHashFrom[-From] {
   def generateHash(from: From): LongPair
 }
 
 object CanGenerateHashFrom {
-  lazy val longHash = new CanGenerateHashFrom[Long] {
+
+  implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
     override def generateHash(from: Long): LongPair = {
-      val out: LongPair = new LongPair
-      out.val1 = 0
-      out.val2 = 0
-      out
+      println("long")
+      new LongPair
     }
   }
 
-  implicit def canGenerateHash: CanGenerateHashFrom[Long] = longHash
+  implicit object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
+    override def generateHash(from: Array[Byte]): LongPair = new LongPair
+  }
+
+  implicit object CanGenerateHashFromBoolean extends CanGenerateHashFrom[Boolean] {
+    override def generateHash(from: Boolean): LongPair = new LongPair
+  }
+
+  implicit object CanGenerateHashFromNothing extends CanGenerateHashFrom[Nothing] {
+    override def generateHash(from: Nothing): LongPair = new LongPair
+  }
+
 }
