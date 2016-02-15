@@ -1,6 +1,5 @@
-package bloomfilter.tests
+package bloomfilter.mutable
 
-import bloomfilter.mutable.BloomFilter
 import org.scalatest.{FreeSpec, Matchers}
 
 class SimpleUsageSpec extends FreeSpec with Matchers {
