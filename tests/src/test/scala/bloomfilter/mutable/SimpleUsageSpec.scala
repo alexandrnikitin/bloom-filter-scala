@@ -8,11 +8,6 @@ class SimpleUsageSpec extends FreeSpec with Matchers {
     bloomFilter.add(1)
     bloomFilter.mightContain(1) shouldBe true
   }
-  "Scenario: Simple add and get 2" in {
-    val bloomFilter = BloomFilter[Boolean](1000, 0.01)
-    bloomFilter.add(true)
-    bloomFilter.mightContain(true) shouldBe true
-  }
   "Scenario: Simple add and get 3" in {
     val bloomFilter = BloomFilter[Array[Byte]](1000, 0.01)
     bloomFilter.add(Array[Byte](1, 2, 3))
