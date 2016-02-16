@@ -37,4 +37,10 @@ object Publishing {
 
   lazy val settings = generalSettings ++ sharedSettings ++ credentialSettings ++ pgpPassphraseSettings
 
+  lazy val noPublishSettings = Seq(
+    publish :=(),
+    publishLocal :=(),
+    publishArtifact := false
+  )
+
 }
