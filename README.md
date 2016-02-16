@@ -1,1 +1,3 @@
+[![Build Status](https://travis-ci.org/alexandrnikitin/bloom-filter-scala.svg?branch=master)](https://travis-ci.org/alexandrnikitin/bloom-filter-scala)
+
 in progress...
