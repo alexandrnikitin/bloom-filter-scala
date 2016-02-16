@@ -10,7 +10,7 @@ object TheBuild extends Build {
 
   lazy val bloomFilter = Project("bloom-filter", file("bloom-filter"))
       .configs(Configs.all: _*)
-      .settings(Settings.root: _*)
+      .settings(Settings.bloomfilter: _*)
 
   lazy val tests = Project("tests", file("tests"))
       .dependsOn(bloomFilter)
