@@ -15,7 +15,7 @@ object Publishing {
     Option(System.getenv().get("PGP_PASSPHRASE"))
         .map(s => pgpPassphrase := Some(s.toCharArray)).toSeq
 
-  private lazy val sharedSettings: Seq[Def.Setting[_ >: Option[Resolver] with ((MavenRepository) => Boolean) with Boolean]] = Seq(
+  private lazy val sharedSettings = Seq(
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := Function.const(false),
