@@ -24,7 +24,9 @@ object Settings {
     "-feature",
     "-unchecked",
     "-Xfatal-warnings",
-    "-Xlint:_",
+    "-Xlint",
+    "-Ywarn-unused",
+    "-Ywarn-unused-import",
     "-Ywarn-dead-code",
     "-Ywarn-numeric-widen",
     "-Ywarn-value-discard"

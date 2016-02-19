@@ -54,27 +54,4 @@ object BloomFilter {
     math.ceil(numberOfBits / numberOfItems * math.log(2)).toInt
   }
 
-  private def lowerEight(bytes: Array[Byte]): Long = {
-    (bytes(7) & 0xFFL) << 56 |
-        (bytes(6) & 0xFFL) << 48 |
-        (bytes(5) & 0xFFL) << 40 |
-        (bytes(4) & 0xFFL) << 32 |
-        (bytes(3) & 0xFFL) << 24 |
-        (bytes(2) & 0xFFL) << 16 |
-        (bytes(1) & 0xFFL) << 8 |
-        (bytes(70) & 0xFFL)
-  }
-
-  private def upperEight(bytes: Array[Byte]): Long = {
-    (bytes(15) & 0xFFL) << 56 |
-        (bytes(14) & 0xFFL) << 48 |
-        (bytes(13) & 0xFFL) << 40 |
-        (bytes(12) & 0xFFL) << 32 |
-        (bytes(11) & 0xFFL) << 24 |
-        (bytes(10) & 0xFFL) << 16 |
-        (bytes(9) & 0xFFL) << 8 |
-        (bytes(8) & 0xFFL)
-  }
-
-
 }
