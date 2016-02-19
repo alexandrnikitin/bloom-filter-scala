@@ -7,6 +7,7 @@ trait CanGenerateHashFrom[-From] {
   def generateHash(from: From): LongPair
 }
 
+@com.github.ghik.silencer.silent
 object CanGenerateHashFrom {
 
   implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {

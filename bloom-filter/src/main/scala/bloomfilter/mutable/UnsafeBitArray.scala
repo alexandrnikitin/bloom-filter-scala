@@ -3,7 +3,7 @@ package bloomfilter.mutable
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeBitArray(numberOfBits: Long) {
-  private val indices = math.ceil(numberOfBits / 64).toLong
+  private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
   private val ptr = unsafe.allocateMemory(indices)
 
   def get(index: Long): Boolean = {

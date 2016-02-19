@@ -10,7 +10,7 @@ class ArrayBenchmark {
 
   private val numberOfBits = Int.MaxValue
 
-  val unsafeBits = new UnsafeBitArray(numberOfBits)
+  val unsafeBits = new UnsafeBitArray(numberOfBits.toLong)
   val bitsSet = new BitSet(numberOfBits)
 
   @Benchmark

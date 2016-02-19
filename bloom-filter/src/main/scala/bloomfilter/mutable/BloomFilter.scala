@@ -17,7 +17,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
   }
 
   def expectedFalsePositiveRate(): Double = {
-    math.pow(bits.getBitCount / numberOfBits, numberOfHashes)
+    math.pow(bits.getBitCount.toDouble / numberOfBits, numberOfHashes.toDouble)
   }
 
   private def getBits(x: T): IndexedSeq[Long] = {
