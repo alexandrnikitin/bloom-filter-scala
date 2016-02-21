@@ -12,13 +12,17 @@ object TheBuild extends Build {
       .configs(Configs.all: _*)
       .settings(Settings.bloomfilter: _*)
 
+  lazy val sandbox = Project("sandbox", file("sandbox"))
+      .configs(Configs.all: _*)
+      .settings(Settings.sandbox: _*)
+
   lazy val tests = Project("tests", file("tests"))
-      .dependsOn(bloomFilter)
+      .dependsOn(bloomFilter, sandbox)
       .configs(Configs.all: _*)
       .settings(Settings.tests: _*)
 
   lazy val benchmark = Project("benchmark", file("benchmark"))
-      .dependsOn(bloomFilter)
+      .dependsOn(bloomFilter, sandbox)
       .configs(Configs.all: _*)
       .settings(Settings.benchmark: _*)
       .enablePlugins(JmhPlugin)
