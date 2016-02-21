@@ -1,29 +1,29 @@
 package bloomfilter
 
-import bloomfilter.hash.MurmurHash3
-import bloomfilter.hash.MurmurHash3.LongPair
+import hashing.MurmurHash3
 
 trait CanGenerateHashFrom[-From] {
-  def generateHash(from: From): LongPair
+  def generateHash(from: From): (Long, Long)
 }
 
 @com.github.ghik.silencer.silent
 object CanGenerateHashFrom {
 
-  implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
-    override def generateHash(from: Long): LongPair = new LongPair
+  implicit object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
+    override def generateHash(from: Array[Byte]): (Long, Long) =
+      MurmurHash3.murmurhash3_x64_128(from, 0, from.length, 0)
   }
 
-  implicit object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
-    override def generateHash(from: Array[Byte]): LongPair = {
-      val pair = new LongPair
-      MurmurHash3.murmurhash3_x64_128(from, 0, from.length, 0, pair)
-      pair
+  implicit object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
+    override def generateHash(from: String): (Long, Long) = {
+      val bytes = from.getBytes
+      MurmurHash3.murmurhash3_x64_128(bytes, 0, bytes.length, 0)
     }
   }
 
-  implicit object CanGenerateHashFromNothing extends CanGenerateHashFrom[Nothing] {
-    override def generateHash(from: Nothing): LongPair = new LongPair
+  implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
+    override def generateHash(from: Long): (Long, Long) =
+      (MurmurHash3.fmix64(from), 0)
   }
 
 }

@@ -27,7 +27,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
       i <- 0 to numberOfHashes
     } yield {
       // TODO seed the next hash?
-      val h = pair.val1 + i * pair.val2
+      val h = pair._1 + i * pair._2
       val nextHash = if (h < 0) ~h else h
       nextHash % numberOfBits
     }
