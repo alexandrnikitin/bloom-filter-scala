@@ -4,6 +4,7 @@ import java.nio.ByteBuffer
 
 import bloomfilter.hash.MurmurHash3.LongPair
 import bloomfilter.hash.{MurmurHash3 => jMurmurHash3}
+import com.yahoo.sketches.hash.{MurmurHash3 => yMurmurHash3}
 import com.google.common.hash.Hashing
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
 
@@ -39,5 +40,10 @@ class MurmurHash3Benchmark {
   @Benchmark
   def algebirdVersion() = {
     algebirdMurmur.apply(key)
+  }
+
+  @Benchmark
+  def yahooVersion() = {
+    yMurmurHash3.hash(key, 0)
   }
 }

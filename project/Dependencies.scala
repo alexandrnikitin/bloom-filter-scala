@@ -9,12 +9,13 @@ object Dependencies {
   private val googleFindbugs = "com.google.code.findbugs" % "jsr305" % "2.0.3" // needed by guava
   private val breeze = "org.scalanlp" %% "breeze" % "0.12"
   private val breezeNatives = "org.scalanlp" %% "breeze-natives" % "0.12"
+  private val sketches = "com.yahoo.datasketches" % "sketches-core" % "0.3.2"
 
   private val common = dependencies(silencer)
 
   val bloomfilter = common
   val tests = common ++ dependencies(scalatest, scalacheck)
-  val benchmark = common ++ dependencies(scalatest, googleGuava, googleFindbugs, breeze, breezeNatives)
+  val benchmark = common ++ dependencies(scalatest, googleGuava, googleFindbugs, breeze, breezeNatives, sketches)
 
   private def dependencies(modules: ModuleID*): Seq[Setting[_]] = Seq(libraryDependencies ++= modules)
 }
