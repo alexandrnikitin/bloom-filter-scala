@@ -33,4 +33,11 @@ class MurmurHash3Benchmark {
   def cassandraVersion() = {
     CassandraMurmurHash.hash3_x64_128(ByteBuffer.wrap(key), 0, key.length, 0)
   }
+
+  val algebirdMurmur = AlgebirdMurmurHash128(0)
+
+  @Benchmark
+  def algebirdVersion() = {
+    algebirdMurmur.apply(key)
+  }
 }
