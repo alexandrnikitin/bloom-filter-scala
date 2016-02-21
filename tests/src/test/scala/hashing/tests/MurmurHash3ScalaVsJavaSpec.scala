@@ -1,9 +1,10 @@
-package hashing
+package hashing.tests
 
-import bloomfilter.hash.MurmurHash3.LongPair
-import bloomfilter.hash.{MurmurHash3 => jMurmurHash3}
+import hashing.MurmurHash3
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
+import sandbox.hashing.MurmurHash3.LongPair
+import sandbox.hashing.{MurmurHash3 => jMurmurHash3}
 
 object MurmurHash3ScalaVsJavaSpec extends Properties("MurmurHash3") {
 

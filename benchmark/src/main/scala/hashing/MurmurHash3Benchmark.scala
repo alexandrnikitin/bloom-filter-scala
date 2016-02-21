@@ -2,8 +2,8 @@ package hashing
 
 import java.nio.ByteBuffer
 
-import bloomfilter.hash.MurmurHash3.LongPair
-import bloomfilter.hash.{MurmurHash3 => jMurmurHash3}
+import sandbox.hashing.{MurmurHash3 => jMurmurHash3}
+import sandbox.hashing.MurmurHash3.LongPair
 import com.yahoo.sketches.hash.{MurmurHash3 => yMurmurHash3}
 import com.google.common.hash.Hashing
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
