@@ -2,8 +2,8 @@ package hashing
 
 import bloomfilter.hash.MurmurHash3.LongPair
 import bloomfilter.hash.{MurmurHash3 => jMurmurHash3}
+import com.google.common.hash.Hashing
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
-
 
 @State(Scope.Benchmark)
 class MurmurHash3Benchmark {
@@ -18,5 +18,12 @@ class MurmurHash3Benchmark {
   @Benchmark
   def scalaVersion() = {
     MurmurHash3.murmurhash3_x64_128(key, 0, key.length, 0)
+  }
+
+  val guavaMurmur = Hashing.murmur3_128()
+
+  @Benchmark
+  def guavaVersion() = {
+    guavaMurmur.hashBytes(key, 0, key.length)
   }
 }
