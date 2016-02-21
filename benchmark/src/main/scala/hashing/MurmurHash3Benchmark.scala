@@ -1,5 +1,7 @@
 package hashing
 
+import java.nio.ByteBuffer
+
 import bloomfilter.hash.MurmurHash3.LongPair
 import bloomfilter.hash.{MurmurHash3 => jMurmurHash3}
 import com.google.common.hash.Hashing
@@ -25,5 +27,10 @@ class MurmurHash3Benchmark {
   @Benchmark
   def guavaVersion() = {
     guavaMurmur.hashBytes(key, 0, key.length)
+  }
+
+  @Benchmark
+  def cassandraVersion() = {
+    CassandraMurmurHash.hash3_x64_128(ByteBuffer.wrap(key), 0, key.length, 0)
   }
 }
