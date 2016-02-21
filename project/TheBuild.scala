@@ -21,7 +21,7 @@ object TheBuild extends Build {
       .configs(Configs.all: _*)
       .settings(Settings.tests: _*)
 
-  lazy val benchmark = Project("benchmark", file("benchmark"))
+  lazy val benchmarks = Project("benchmarks", file("benchmarks"))
       .dependsOn(bloomFilter, sandbox)
       .configs(Configs.all: _*)
       .settings(Settings.benchmark: _*)
