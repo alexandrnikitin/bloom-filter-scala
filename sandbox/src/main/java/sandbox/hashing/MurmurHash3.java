@@ -1,4 +1,4 @@
-package bloomfilter.hash;
+package sandbox.hashing;
 
 /**
  *  The MurmurHash3 algorithm was created by Austin Appleby and placed in the public domain.
