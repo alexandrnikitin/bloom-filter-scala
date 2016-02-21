@@ -1,6 +1,7 @@
 import sbt.Keys._
 import sbt._
 import BuildKeys._
+import scoverage.ScoverageKeys._
 
 object Testing {
 
@@ -25,9 +26,18 @@ object Testing {
     // TODO add JMH test framework
   )
 
-  lazy val settings = testSettings ++ e2eSettings ++ btSettings ++ Seq(
+  private lazy val testAllSettings = Seq(
     testAll :=(),
     testAll <<= testAll.dependsOn(test in EndToEndTest),
     testAll <<= testAll.dependsOn(test in Test)
   )
+
+  private lazy val scoverageSettings = Seq(
+    coverageMinimum := 60,
+    coverageFailOnMinimum := false,
+    coverageHighlighting := true,
+    coverageExcludedPackages := "*Benchmark"
+  )
+
+  lazy val settings = testSettings ++ e2eSettings ++ btSettings ++ testAllSettings ++ scoverageSettings
 }
