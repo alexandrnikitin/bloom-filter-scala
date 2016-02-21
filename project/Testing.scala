@@ -36,7 +36,7 @@ object Testing {
     coverageMinimum := 60,
     coverageFailOnMinimum := false,
     coverageHighlighting := true,
-    coverageExcludedPackages := "*Benchmark"
+    coverageExcludedPackages := ".*Benchmark"
   )
 
   lazy val settings = testSettings ++ e2eSettings ++ btSettings ++ testAllSettings ++ scoverageSettings
