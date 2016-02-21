@@ -34,39 +34,43 @@ object MurmurHash3 {
 
     val roundedEnd = offset + (len & 0xFFFFFFF0);  // round down to 16 byte block
 
-    for (i <- offset.until(roundedEnd).by(16)) {
+    var i = offset
+    while (i < roundedEnd) {
       var k1 = getLongLittleEndian(key, i)
       var k2 = getLongLittleEndian(key, i + 8)
       k1 *= c1; k1 = rotateLeft(k1, 31); k1 *= c2; h1 ^= k1
       h1 = rotateLeft(h1, 27); h1 += h2; h1 = h1 * 5 + 0x52dce729
       k2 *= c2; k2 = rotateLeft(k2, 33); k2 *= c1; h2 ^= k2
       h2 = rotateLeft(h2, 31); h2 += h1; h2 = h2 * 5 + 0x38495ab5
+
+      i += 16
     }
 
     var k1: Long = 0
     var k2: Long = 0
 
-    if (len == 15) k2 = (key(roundedEnd + 14) & 0xffL) << 48
-    if (len >= 14) k2 |= (key(roundedEnd + 13) & 0xffL) << 40
-    if (len >= 13) k2 |= (key(roundedEnd + 12) & 0xffL) << 32
-    if (len >= 12) k2 |= (key(roundedEnd + 11) & 0xffL) << 24
-    if (len >= 11) k2 |= (key(roundedEnd + 10) & 0xffL) << 16
-    if (len >= 10) k2 |= (key(roundedEnd + 9) & 0xffL) << 8
-    if (len >= 9) {
+    val lenVar = len & 15
+    if (lenVar == 15) k2 = (key(roundedEnd + 14) & 0xffL) << 48
+    if (lenVar >= 14) k2 |= (key(roundedEnd + 13) & 0xffL) << 40
+    if (lenVar >= 13) k2 |= (key(roundedEnd + 12) & 0xffL) << 32
+    if (lenVar >= 12) k2 |= (key(roundedEnd + 11) & 0xffL) << 24
+    if (lenVar >= 11) k2 |= (key(roundedEnd + 10) & 0xffL) << 16
+    if (lenVar >= 10) k2 |= (key(roundedEnd + 9) & 0xffL) << 8
+    if (lenVar >= 9) {
       k2 |= (key(roundedEnd + 8) & 0xffL)
       k2 *= c2
       k2 = rotateLeft(k2, 33)
       k2 *= c1
       h2 ^= k2
     }
-    if (len >= 8) k1 = key(roundedEnd + 7).toLong << 56
-    if (len >= 7) k1 |= (key(roundedEnd + 6) & 0xffL) << 48
-    if (len >= 6) k1 |= (key(roundedEnd + 5) & 0xffL) << 40
-    if (len >= 5) k1 |= (key(roundedEnd + 4) & 0xffL) << 32
-    if (len >= 4) k1 |= (key(roundedEnd + 3) & 0xffL) << 24
-    if (len >= 3) k1 |= (key(roundedEnd + 2) & 0xffL) << 16
-    if (len >= 2) k1 |= (key(roundedEnd + 1) & 0xffL) << 8
-    if (len >= 1) {
+    if (lenVar >= 8) k1 = key(roundedEnd + 7).toLong << 56
+    if (lenVar >= 7) k1 |= (key(roundedEnd + 6) & 0xffL) << 48
+    if (lenVar >= 6) k1 |= (key(roundedEnd + 5) & 0xffL) << 40
+    if (lenVar >= 5) k1 |= (key(roundedEnd + 4) & 0xffL) << 32
+    if (lenVar >= 4) k1 |= (key(roundedEnd + 3) & 0xffL) << 24
+    if (lenVar >= 3) k1 |= (key(roundedEnd + 2) & 0xffL) << 16
+    if (lenVar >= 2) k1 |= (key(roundedEnd + 1) & 0xffL) << 8
+    if (lenVar >= 1) {
       k1 |= (key(roundedEnd) & 0xffL)
       k1 *= c1
       k1 = rotateLeft(k1, 31)
