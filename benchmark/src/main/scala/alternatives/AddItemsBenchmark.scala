@@ -8,7 +8,6 @@ import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
 @State(Scope.Benchmark)
 class AddItemsBenchmark {
 
-  private val iterations = 10000L
   private val itemsExpected = 1000000L
   private val falsePositiveRate = 0.01
 
@@ -18,29 +17,17 @@ class AddItemsBenchmark {
 
   @Benchmark
   def guava() = {
-    var i = 0L
-    while (i < iterations) {
-      guavaBF.put(i)
-      i += 1
-    }
+    guavaBF.put(1L)
   }
 
   @Benchmark
   def breeze() = {
-    var i = 0L
-    while (i < iterations) {
-      breezeBF.+=(i)
-      i += 1
-    }
+    breezeBF.+=(1L)
   }
 
   @Benchmark
   def my() = {
-    var i = 0L
-    while (i < iterations) {
-      myBF.add(i)
-      i += 1
-    }
+    myBF.add(1L)
   }
 
 
