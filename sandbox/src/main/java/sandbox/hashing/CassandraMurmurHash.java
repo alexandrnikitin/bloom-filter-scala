@@ -1,4 +1,4 @@
-package hashing;
+package sandbox.hashing;
 
 import java.nio.ByteBuffer;
 

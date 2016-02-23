@@ -15,7 +15,7 @@ object Settings {
 
   lazy val root = build ++ Testing.settings ++ Publishing.noPublishSettings
   lazy val bloomfilter = build ++ Testing.settings ++ Dependencies.bloomfilter ++ Publishing.settings
-  lazy val sandbox = build ++ Testing.settings
+  lazy val sandbox = build ++ Testing.settings ++ Dependencies.sandbox
   lazy val tests = build ++ Testing.settings ++ Dependencies.tests
   lazy val benchmark = build ++ Testing.settings ++ Dependencies.benchmark
 

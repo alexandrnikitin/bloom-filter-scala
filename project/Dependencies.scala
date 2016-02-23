@@ -14,6 +14,7 @@ object Dependencies {
   private val common = dependencies(silencer)
 
   val bloomfilter = common
+  val sandbox = common
   val tests = common ++ dependencies(scalatest, scalacheck)
   val benchmark = common ++ dependencies(scalatest, googleGuava, googleFindbugs, breeze, breezeNatives, sketches)
 

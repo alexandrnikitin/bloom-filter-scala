@@ -2,7 +2,7 @@ package hashing
 
 import java.nio.ByteBuffer
 
-import sandbox.hashing.{MurmurHash3 => jMurmurHash3}
+import sandbox.hashing.{MurmurHash3 => jMurmurHash3, CassandraMurmurHash, AlgebirdMurmurHash128}
 import sandbox.hashing.MurmurHash3.LongPair
 import com.yahoo.sketches.hash.{MurmurHash3 => yMurmurHash3}
 import com.google.common.hash.Hashing
