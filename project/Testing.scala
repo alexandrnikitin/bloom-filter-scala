@@ -15,7 +15,7 @@ object Testing {
   private lazy val e2eSettings = inConfig(EndToEndTest)(Defaults.testSettings) ++ Seq(
     fork in EndToEndTest := false,
     parallelExecution in EndToEndTest := false,
-    scalaSource in EndToEndTest := baseDirectory.value / "src/e2e/scala"
+    scalaSource in EndToEndTest := baseDirectory.value / "src/endToEnd/scala"
   )
 
   private lazy val btSettings = inConfig(BenchmarkTest)(Defaults.testSettings) ++ Seq(
