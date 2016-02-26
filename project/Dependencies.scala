@@ -10,11 +10,12 @@ object Dependencies {
   private val breeze = "org.scalanlp" %% "breeze" % "0.12"
   private val breezeNatives = "org.scalanlp" %% "breeze-natives" % "0.12"
   private val sketches = "com.yahoo.datasketches" % "sketches-core" % "0.3.2"
+  private val chronicleBytes = "net.openhft" % "chronicle-bytes" % "1.2.3"
 
   private val common = dependencies(silencer)
 
   val bloomfilter = common
-  val sandbox = common
+  val sandbox = common ++ dependencies(chronicleBytes)
   val tests = common ++ dependencies(scalatest, scalacheck)
   val benchmark = common ++ dependencies(scalatest, googleGuava, googleFindbugs, breeze, breezeNatives, sketches)
 

@@ -4,6 +4,7 @@ import java.util.BitSet
 
 import bloomfilter.mutable.UnsafeBitArray
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
+import sandbox.bloomfilter.mutable.ChronicleBitArray
 
 @State(Scope.Benchmark)
 class ArrayBenchmark {
@@ -12,6 +13,7 @@ class ArrayBenchmark {
 
   val unsafeBits = new UnsafeBitArray(numberOfBits.toLong)
   val bitsSet = new BitSet(numberOfBits)
+  val chronicle = new ChronicleBitArray(numberOfBits.toLong)
 
   @Benchmark
   def getUnsafe() = {
@@ -33,6 +35,17 @@ class ArrayBenchmark {
     bitsSet.get(10000)
     bitsSet.get(100000)
     bitsSet.get(1000000)
+  }
+
+  @Benchmark
+  def getChronicle() = {
+    chronicle.get(1)
+    chronicle.get(10)
+    chronicle.get(100)
+    chronicle.get(1000)
+    chronicle.get(10000)
+    chronicle.get(100000)
+    chronicle.get(1000000)
   }
 
 
