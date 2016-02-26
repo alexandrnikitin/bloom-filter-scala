@@ -17,4 +17,6 @@ class UnsafeBitArray(numberOfBits: Long) {
   }
 
   def getBitCount: Long = 0
+
+  def dispose(): Unit = unsafe.freeMemory(ptr)
 }

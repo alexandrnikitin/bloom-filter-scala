@@ -34,6 +34,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
 
   }
 
+  def dispose(): Unit = bits.dispose()
+
 }
 
 object BloomFilter {
