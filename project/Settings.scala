@@ -10,6 +10,7 @@ object Settings {
     addCompilerPlugin("com.github.ghik" % "silencer-plugin" % "0.3"),
 
     scalacOptions ++= ScalacSettings.base,
+    javacOptions ++= JavacSettings.base,
     organization := "com.github.alexandrnikitin"
   )
 
@@ -19,13 +20,18 @@ object Settings {
   lazy val tests = build ++ Testing.settings ++ Dependencies.tests
   lazy val benchmark = build ++ Testing.settings ++ Dependencies.benchmark
 
+  object JavacSettings {
+    val base = Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+  }
+
   object ScalacSettings {
     val base = Seq(
       "-deprecation",
       "-encoding", "UTF-8",
       "-feature",
       "-unchecked",
-      "-optimise"
+      "-optimise",
+      "-target:jvm-1.8"
     )
 
     val strict = Seq(
