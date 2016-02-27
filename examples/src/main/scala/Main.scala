@@ -4,16 +4,24 @@ import scala.util.Random
 
 object Main extends App {
   private val random = new Random()
+  val elements = 10000000
+  val a = new Array[Array[Byte]](elements)
 
-  val a = new Array[Array[Byte]](100000000)
-  for (i <- a.indices) {
+  var i = 0
+  while (i < elements) {
     val key = new Array[Byte](128)
     random.nextBytes(key)
     a(i) = key
+    i += 1
   }
 
-  val bf = BloomFilter[Array[Byte]](100000000, 0.1)
-  for (i <- a.indices) {
-    bf.add(a(i))
+  println("Prepeared data. Press any key")
+  System.in.read()
+
+  val bf = BloomFilter[Array[Byte]](elements, 0.1)
+  var j = 0
+  while (j < elements) {
+    bf.add(a(j))
+    j += 1
   }
 }
