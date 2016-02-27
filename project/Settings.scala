@@ -19,6 +19,7 @@ object Settings {
   lazy val sandbox = build ++ Testing.settings ++ Dependencies.sandbox
   lazy val tests = build ++ Testing.settings ++ Dependencies.tests
   lazy val benchmark = build ++ Testing.settings ++ Dependencies.benchmark
+  lazy val examples = build
 
   object JavacSettings {
     val base = Seq("-source", "1.8", "-target", "1.8", "-Xlint")
