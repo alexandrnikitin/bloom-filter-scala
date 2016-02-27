@@ -21,25 +21,21 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
   }
 
   def mightContain(x: T): Boolean = {
-    getBits(x).forall(bits.get)
+    val pair = canGenerateHash.generateHash(x)
+
+    var i = 0
+    while (i < numberOfHashes) {
+      val h = pair._1 + i * pair._2
+      val nextHash = if (h < 0) ~h else h
+      if (!bits.get(nextHash % numberOfBits))
+        return false
+      i += 1
+    }
+    true
   }
 
   def expectedFalsePositiveRate(): Double = {
     math.pow(bits.getBitCount.toDouble / numberOfBits, numberOfHashes.toDouble)
-  }
-
-  private def getBits(x: T): IndexedSeq[Long] = {
-    val pair = canGenerateHash.generateHash(x)
-
-    for {
-      i <- 0 to numberOfHashes
-    } yield {
-      // TODO seed the next hash?
-      val h = pair._1 + i * pair._2
-      val nextHash = if (h < 0) ~h else h
-      nextHash % numberOfBits
-    }
-
   }
 
   def dispose(): Unit = bits.dispose()
