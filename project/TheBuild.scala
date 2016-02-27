@@ -1,3 +1,4 @@
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
 import pl.project13.scala.sbt.JmhPlugin
 import sbt._
 
@@ -31,6 +32,7 @@ object TheBuild extends Build {
       .dependsOn(bloomFilter)
       .configs(Configs.all: _*)
       .settings(Settings.examples: _*)
+      .enablePlugins(JavaAppPackaging)
 
 }
 
