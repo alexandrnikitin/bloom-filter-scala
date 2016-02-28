@@ -1,10 +1,10 @@
 package bloomfilter.mutable
 
-import bloomfilter.CanGenerateHashFrom
+import bloomfilter.CanGenerate128HashFrom
 
 import scala.collection.immutable.IndexedSeq
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
+class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerate128HashFrom[T]) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
@@ -45,7 +45,7 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
 object BloomFilter {
 
   def apply[T](numberOfItems: Long, falsePositiveRate: Double)(
-      implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
+      implicit canGenerateHash: CanGenerate128HashFrom[T]): BloomFilter[T] = {
 
     val nb = optimalNumberOfBits(numberOfItems, falsePositiveRate)
     val nh = optimalNumberOfHashes(numberOfItems, nb)
