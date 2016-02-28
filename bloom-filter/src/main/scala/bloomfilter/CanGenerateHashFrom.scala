@@ -7,9 +7,9 @@ trait CanGenerateHashFrom[-From] {
 }
 
 @com.github.ghik.silencer.silent
-object CanGenerate128HashFrom {
+object CanGenerateHashFrom {
 
-  implicit object CanGenerate128HashFromLong extends CanGenerateHashFrom[Long] {
+  implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
     override def generateHash(from: Long): Long =
       MurmurHash3.fmix64(from)
   }
