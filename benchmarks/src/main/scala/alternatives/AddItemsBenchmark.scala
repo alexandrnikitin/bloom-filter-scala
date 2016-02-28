@@ -1,6 +1,6 @@
 package alternatives
 
-import bloomfilter.mutable._128bit.{BloomFilter => MyBloomFilter}
+import bloomfilter.mutable.{BloomFilter => MyBloomFilter}
 import breeze.util.{BloomFilter => BloomFilterBreeze}
 import com.google.common.hash.{BloomFilter => BloomFilterGuava, Funnels}
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
