@@ -1,4 +1,5 @@
-import bloomfilter.mutable.BloomFilter
+
+import bloomfilter.mutable._128bit.BloomFilter
 
 import scala.util.Random
 

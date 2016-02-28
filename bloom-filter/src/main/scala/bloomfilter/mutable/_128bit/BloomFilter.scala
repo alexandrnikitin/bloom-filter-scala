@@ -1,8 +1,7 @@
-package bloomfilter.mutable
+package bloomfilter.mutable._128bit
 
 import bloomfilter.CanGenerate128HashFrom
-
-import scala.collection.immutable.IndexedSeq
+import bloomfilter.mutable.UnsafeBitArray
 
 class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerate128HashFrom[T]) {
 

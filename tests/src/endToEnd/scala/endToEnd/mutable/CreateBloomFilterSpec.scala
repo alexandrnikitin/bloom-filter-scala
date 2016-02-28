@@ -1,6 +1,6 @@
 package endToEnd.mutable
 
-import bloomfilter.mutable.BloomFilter
+import bloomfilter.mutable._128bit.BloomFilter
 import org.scalatest.{FreeSpec, Matchers}
 
 class CreateBloomFilterSpec extends FreeSpec with Matchers {
