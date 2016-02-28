@@ -8,11 +8,11 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
   private val bits = new UnsafeBitArray(numberOfBits)
 
   def add(x: T): Unit = {
-    val pair = canGenerateHash.generateHash(x)
+    val hash = canGenerateHash.generateHash(x)
 
     var i = 0
     while (i < numberOfHashes) {
-      val h = pair._1 + i * pair._2
+      val h = hash._1 + i * hash._2
       val nextHash = if (h < 0) ~h else h
       bits.set(nextHash % numberOfBits)
       i += 1
@@ -20,11 +20,11 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
   }
 
   def mightContain(x: T): Boolean = {
-    val pair = canGenerateHash.generateHash(x)
+    val hash = canGenerateHash.generateHash(x)
 
     var i = 0
     while (i < numberOfHashes) {
-      val h = pair._1 + i * pair._2
+      val h = hash._1 + i * hash._2
       val nextHash = if (h < 0) ~h else h
       if (!bits.get(nextHash % numberOfBits))
         return false
