@@ -1,6 +1,6 @@
 package bloomfilter
 
-import hashing.MurmurHash3
+import hashing.{MurmurHash3Generic, MurmurHash3}
 
 trait CanGenerateHashFrom[-From] {
   def generateHash(from: From): (Long, Long)
@@ -11,7 +11,7 @@ object CanGenerateHashFrom {
 
   implicit object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
     override def generateHash(from: Array[Byte]): (Long, Long) =
-      MurmurHash3.murmurhash3_x64_128(from, 0, from.length, 0)
+      MurmurHash3Generic.murmurhash3_x64_128(from, 0, from.length, 0)
   }
 
   implicit object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
