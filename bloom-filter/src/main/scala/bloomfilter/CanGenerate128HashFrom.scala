@@ -27,8 +27,10 @@ object CanGenerate128HashFrom {
   }
 
   implicit object CanGenerate128HashFromLong extends CanGenerate128HashFrom[Long] {
-    override def generateHash(from: Long): (Long, Long) =
-      (MurmurHash3.fmix64(from), 0)
+    override def generateHash(from: Long): (Long, Long) = {
+      val hash = MurmurHash3.fmix64(from)
+      (hash, hash)
+    }
   }
 
 }
