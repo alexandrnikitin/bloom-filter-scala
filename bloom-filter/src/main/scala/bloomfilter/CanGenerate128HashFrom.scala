@@ -15,9 +15,14 @@ object CanGenerate128HashFrom {
   }
 
   implicit object CanGenerate128HashFromString extends CanGenerate128HashFrom[String] {
+    import scala.concurrent.util.Unsafe.{instance => unsafe}
+
+    private val valueOffset = unsafe.objectFieldOffset(classOf[String].getDeclaredField("value"))
+    private val charBase = unsafe.arrayBaseOffset(classOf[Array[java.lang.Character]])
+
     override def generateHash(from: String): (Long, Long) = {
-      val bytes = from.getBytes
-      MurmurHash3.murmurhash3_x64_128(bytes, 0, bytes.length, 0)
+      val value = unsafe.getObject(from, valueOffset).asInstanceOf[Array[Char]]
+      MurmurHash3Generic.murmurhash3_x64_128(value, charBase, from.length * 2, 0)
     }
   }
 
