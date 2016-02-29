@@ -1,14 +1,15 @@
 package bloomfilter.mutable._128bit
 
-import bloomfilter.CanGenerate128HashFrom
 import bloomfilter.mutable.UnsafeBitArray
+import bloomfilter.{CanGenerate128HashFrom, Hash}
 
 class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerate128HashFrom[T]) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
   def add(x: T): Unit = {
-    val hash = canGenerateHash.generateHash(x)
+    val hash = new Hash
+    canGenerateHash.generateHash(x, hash)
 
     var i = 0
     while (i < numberOfHashes) {
@@ -20,7 +21,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
   }
 
   def mightContain(x: T): Boolean = {
-    val hash = canGenerateHash.generateHash(x)
+    val hash = new Hash
+    canGenerateHash.generateHash(x, hash)
 
     var i = 0
     while (i < numberOfHashes) {
