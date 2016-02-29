@@ -1,4 +1,4 @@
-package alternatives.my
+package bloomfilter
 
 import com.google.common.hash.{BloomFilter, Funnels}
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
