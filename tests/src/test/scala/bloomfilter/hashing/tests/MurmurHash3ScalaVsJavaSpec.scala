@@ -1,6 +1,6 @@
-package hashing.tests
+package bloomfilter.hashing.tests
 
-import hashing.MurmurHash3
+import bloomfilter.hashing.MurmurHash3
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
 import sandbox.hashing.MurmurHash3.LongPair

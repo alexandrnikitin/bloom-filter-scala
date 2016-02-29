@@ -1,6 +1,6 @@
 package bloomfilter
 
-import hashing.{MurmurHash3Generic, MurmurHash3}
+import bloomfilter.hashing.{MurmurHash3Generic, MurmurHash3}
 
 trait CanGenerate128HashFrom[-From] {
   def generateHash(from: From): (Long, Long)

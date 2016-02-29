@@ -1,7 +1,7 @@
 package bloomfilter
 
 import com.github.ghik.silencer.silent
-import hashing.MurmurHash3Generic
+import bloomfilter.hashing.MurmurHash3Generic
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 

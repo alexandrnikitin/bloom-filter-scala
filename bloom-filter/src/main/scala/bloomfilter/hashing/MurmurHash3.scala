@@ -1,4 +1,4 @@
-package hashing
+package bloomfilter.hashing
 
 import java.lang.Long.rotateLeft
 
