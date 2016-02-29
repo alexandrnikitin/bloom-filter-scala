@@ -1,6 +1,6 @@
-package bloomfilter
+package bloomfilter.mutable
 
-import com.google.common.hash.{BloomFilter, Funnels}
+import com.google.common.hash.Funnels
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
 
 @State(Scope.Benchmark)
