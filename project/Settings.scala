@@ -18,7 +18,7 @@ object Settings {
   lazy val bloomfilter = build ++ Testing.settings ++ Dependencies.bloomfilter ++ Publishing.settings ++ (scalacOptions ++= ScalacSettings.strict)
   lazy val sandbox = build ++ Testing.settings ++ Dependencies.sandbox
   lazy val tests = build ++ Testing.settings ++ Dependencies.tests
-  lazy val benchmark = build ++ Testing.settings ++ Dependencies.benchmark
+  lazy val benchmarks = build ++ Dependencies.benchmarks
   lazy val examples = build
 
   object JavacSettings {

@@ -25,7 +25,7 @@ object TheBuild extends Build {
   lazy val benchmarks = Project("benchmarks", file("benchmarks"))
       .dependsOn(bloomFilter, sandbox)
       .configs(Configs.all: _*)
-      .settings(Settings.benchmark: _*)
+      .settings(Settings.benchmarks: _*)
       .enablePlugins(JmhPlugin)
 
   lazy val examples = Project("examples", file("examples"))

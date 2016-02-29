@@ -17,7 +17,7 @@ object Dependencies {
   val bloomfilter = common
   val sandbox = common ++ dependencies(chronicleBytes)
   val tests = common ++ dependencies(scalatest, scalacheck)
-  val benchmark = common ++ dependencies(scalatest, googleGuava, googleFindbugs, breeze, breezeNatives, sketches)
+  val benchmarks = common ++ dependencies(googleGuava, googleFindbugs, breeze, breezeNatives, sketches)
 
   private def dependencies(modules: ModuleID*): Seq[Setting[_]] = Seq(libraryDependencies ++= modules)
 }
