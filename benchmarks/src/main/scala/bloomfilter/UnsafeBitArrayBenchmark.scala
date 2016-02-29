@@ -7,7 +7,7 @@ import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
 import sandbox.bloomfilter.mutable.ChronicleBitArray
 
 @State(Scope.Benchmark)
-class ArrayBenchmark {
+class UnsafeBitArrayBenchmark {
 
   private val numberOfBits = Int.MaxValue
 
