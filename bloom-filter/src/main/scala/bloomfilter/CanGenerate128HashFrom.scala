@@ -1,6 +1,6 @@
 package bloomfilter
 
-import bloomfilter.hashing.{MurmurHash3Generic, MurmurHash3}
+import bloomfilter.hashing.{MurmurHash3, MurmurHash3Generic}
 
 trait CanGenerate128HashFrom[-From] {
   def generateHash(from: From): (Long, Long)
@@ -15,6 +15,7 @@ object CanGenerate128HashFrom {
   }
 
   implicit object CanGenerate128HashFromString extends CanGenerate128HashFrom[String] {
+
     import scala.concurrent.util.Unsafe.{instance => unsafe}
 
     private val valueOffset = unsafe.objectFieldOffset(classOf[String].getDeclaredField("value"))

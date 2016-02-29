@@ -1,9 +1,7 @@
 package bloomfilter
 
-import com.github.ghik.silencer.silent
 import bloomfilter.hashing.MurmurHash3Generic
-
-import scala.concurrent.util.Unsafe.{instance => unsafe}
+import com.github.ghik.silencer.silent
 
 trait CanGenerateHashFrom[-From] {
   def generateHash(from: From): Long
@@ -22,6 +20,8 @@ object CanGenerateHashFrom {
   }
 
   implicit object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
+
+    import scala.concurrent.util.Unsafe.{instance => unsafe}
 
     private val valueOffset = unsafe.objectFieldOffset(classOf[String].getDeclaredField("value"))
     private val charBase = unsafe.arrayBaseOffset(classOf[Array[java.lang.Character]])
