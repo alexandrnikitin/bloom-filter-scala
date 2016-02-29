@@ -16,6 +16,11 @@ object CanGenerateHashFrom {
     override def generateHash(from: Long): Long = from
   }
 
+  implicit object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
+    override def generateHash(from: Array[Byte]): Long =
+      MurmurHash3Generic.murmurhash3_x64_64(from, 0, from.length, 0)
+  }
+
   implicit object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
 
     private val valueOffset = unsafe.objectFieldOffset(classOf[String].getDeclaredField("value"))
