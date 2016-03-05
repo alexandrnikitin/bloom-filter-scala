@@ -1,11 +1,11 @@
-package bloomfilter.mutable
+package bloomfilter.mutable._128bit
 
 import org.openjdk.jmh.annotations.{Benchmark, Param, Scope, State}
 
 import scala.util.Random
 
 @State(Scope.Benchmark)
-class AddArrayByteItemBenchmark {
+class ArrayByteItemBenchmark {
 
   private val itemsExpected = 1000000L
   private val falsePositiveRate = 0.01
@@ -18,10 +18,16 @@ class AddArrayByteItemBenchmark {
 
   private val item = new Array[Byte](length)
   random.nextBytes(item)
+  bf.add(item)
 
   @Benchmark
-  def my(): Unit = {
+  def myPut(): Unit = {
     bf.add(item)
+  }
+
+  @Benchmark
+  def myGet(): Unit = {
+    bf.mightContain(item)
   }
 
 }
