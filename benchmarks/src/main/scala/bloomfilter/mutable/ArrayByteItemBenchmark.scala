@@ -13,7 +13,7 @@ class ArrayByteItemBenchmark {
 
   private val bf = BloomFilter[Array[Byte]](itemsExpected, falsePositiveRate)
 
-  @Param(Array("1", "64", "256", "1024", "4096"))
+  @Param(Array("1024"))
   var length: Int = _
 
   private val item = new Array[Byte](length)
