@@ -6,22 +6,28 @@ import org.openjdk.jmh.annotations.{Benchmark, Param, Scope, State}
 import scala.util.Random
 
 @State(Scope.Benchmark)
-class AddStringItemBenchmark {
+class StringItemBenchmark {
 
-  private val itemsExpected = 1000000L
+  private val itemsExpected = 100000000L
   private val falsePositiveRate = 0.01
   private val random = new Random()
 
   private val bf = BloomFilter.optimallySized[String](itemsExpected.toDouble, falsePositiveRate)
 
-  @Param(Array("1", "64", "256", "1024", "4096"))
+  @Param(Array("1024"))
   var length: Int = _
 
   private val item = random.nextString(length)
+  bf.+=(item)
 
   @Benchmark
-  def breeze(): Unit = {
+  def breezePut(): Unit = {
     bf.+=(item)
+  }
+
+  @Benchmark
+  def breezeGet(): Unit = {
+    bf.contains(item)
   }
 
 }
