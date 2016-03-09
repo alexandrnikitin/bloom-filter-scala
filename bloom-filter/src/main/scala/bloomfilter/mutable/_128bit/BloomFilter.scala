@@ -3,7 +3,8 @@ package bloomfilter.mutable._128bit
 import bloomfilter.CanGenerate128HashFrom
 import bloomfilter.mutable.UnsafeBitArray
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerate128HashFrom[T]) {
+class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
+    (implicit canGenerateHash: CanGenerate128HashFrom[T]) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
@@ -43,8 +44,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
 
 object BloomFilter {
 
-  def apply[T](numberOfItems: Long, falsePositiveRate: Double)(
-      implicit canGenerateHash: CanGenerate128HashFrom[T]): BloomFilter[T] = {
+  def apply[T](numberOfItems: Long, falsePositiveRate: Double)
+      (implicit canGenerateHash: CanGenerate128HashFrom[T]): BloomFilter[T] = {
 
     val nb = optimalNumberOfBits(numberOfItems, falsePositiveRate)
     val nh = optimalNumberOfHashes(numberOfItems, nb)

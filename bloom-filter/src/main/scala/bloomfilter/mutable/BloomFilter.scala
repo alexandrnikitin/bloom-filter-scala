@@ -2,7 +2,8 @@ package bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
+class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
+    (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   private val bits = new UnsafeBitArray(numberOfBits)
 
@@ -46,8 +47,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)(implicit canGenera
 
 object BloomFilter {
 
-  def apply[T](numberOfItems: Long, falsePositiveRate: Double)(
-      implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
+  def apply[T](numberOfItems: Long, falsePositiveRate: Double)
+      (implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
 
     val nb = optimalNumberOfBits(numberOfItems, falsePositiveRate)
     val nh = optimalNumberOfHashes(numberOfItems, nb)
