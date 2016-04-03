@@ -23,9 +23,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
 
   def mightContain(x: T): Boolean = {
     val hash = canGenerateHash.generateHash(x)
-    val hash1 = hash.toInt
-    val hash2 = (hash >>> 32).toInt
-
+    val hash1 = hash >>> 32
+    val hash2 = (hash << 32) >> 32
     var i = 0
     while (i < numberOfHashes) {
       val h = hash1 + i * hash2

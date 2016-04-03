@@ -4,8 +4,6 @@ import bloomfilter.mutable.BloomFilter
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Gen, Prop, Properties}
 
-import scala.util.{Success, Try}
-
 class BloomFilterSpec extends Properties("BloomFilter") {
 
   property("mightContain") = BloomFilterCommands.property()
@@ -45,14 +43,12 @@ class BloomFilterSpec extends Properties("BloomFilter") {
       def postCondition(state: State, success: Boolean) = success
     }
 
-    case class CheckItem(item: Long) extends Command {
+    case class CheckItem(item: Long) extends SuccessCommand {
       type Result = Boolean
       def run(sut: Sut): Boolean = sut.synchronized(sut.mightContain(item))
-
       def nextState(state: State) = state
       def preCondition(state: State) = true
-      def postCondition(state: State, result: Try[Boolean]): Prop =
-        result == Success(true)
+      def postCondition(state: State, result: Boolean): Prop = result
     }
 
   }
