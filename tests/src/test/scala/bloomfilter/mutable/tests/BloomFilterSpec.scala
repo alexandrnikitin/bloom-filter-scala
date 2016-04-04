@@ -8,6 +8,7 @@ import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
 class BloomFilterSpec extends Properties("BloomFilter") {
 
   property("mightContain Long") = new BloomFilterCommands[Long].property()
+  property("mightContain String") = new BloomFilterCommands[String].property()
   property("mightContain Array[Byte]") = new BloomFilterCommands[Array[Byte]].property()
 
   class BloomFilterCommands[T: Arbitrary](implicit canGenerateHash: CanGenerateHashFrom[T]) extends Commands {
