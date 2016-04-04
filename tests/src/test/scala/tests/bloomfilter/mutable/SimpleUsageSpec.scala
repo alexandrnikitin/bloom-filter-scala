@@ -1,4 +1,4 @@
-package bloomfilter.mutable.tests
+package tests.bloomfilter.mutable
 
 import bloomfilter.mutable._128bit.BloomFilter
 import org.scalatest.{FreeSpec, Matchers}

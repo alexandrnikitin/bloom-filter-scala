@@ -1,4 +1,4 @@
-package bloomfilter.mutable.tests
+package tests.bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 import bloomfilter.mutable.BloomFilter

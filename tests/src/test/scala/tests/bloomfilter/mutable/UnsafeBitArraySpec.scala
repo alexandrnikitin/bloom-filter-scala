@@ -1,4 +1,4 @@
-package bloomfilter.mutable.tests
+package tests.bloomfilter.mutable
 
 import bloomfilter.mutable.UnsafeBitArray
 import org.scalacheck.Prop.forAll

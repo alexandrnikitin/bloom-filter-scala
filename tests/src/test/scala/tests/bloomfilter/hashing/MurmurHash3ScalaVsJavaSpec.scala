@@ -1,4 +1,4 @@
-package bloomfilter.hashing.tests
+package tests.bloomfilter.hashing
 
 import bloomfilter.hashing.MurmurHash3
 import org.scalacheck.Prop.forAll
