@@ -1,6 +1,6 @@
 package bloomfilter
 
-import bloomfilter.hashing.{MurmurHash3, MurmurHash3Generic}
+import bloomfilter.hashing.MurmurHash3Generic
 
 trait CanGenerate128HashFrom[-From] {
   def generateHash(from: From): (Long, Long)
@@ -29,7 +29,7 @@ object CanGenerate128HashFrom {
 
   implicit object CanGenerate128HashFromLong extends CanGenerate128HashFrom[Long] {
     override def generateHash(from: Long): (Long, Long) = {
-      val hash = MurmurHash3.fmix64(from)
+      val hash = MurmurHash3Generic.fmix64(from)
       (hash, hash)
     }
   }
