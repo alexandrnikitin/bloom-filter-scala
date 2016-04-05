@@ -6,7 +6,7 @@ import org.scalacheck.Properties
 import sandbox.hashing.YonikMurmurHash3
 import sandbox.hashing.YonikMurmurHash3.LongPair
 
-object MurmurHash3ScalaVsJavaSpec extends Properties("MurmurHash3") {
+object MurmurHash3ScalaVsJavaSpec extends Properties("MurmurHash3ScalaVsJavaSpec") {
 
   property("murmurhash3_x64_128") = forAll { (key: Array[Byte]) =>
     val tuple = MurmurHash3Generic.murmurhash3_x64_128(key, 0, key.length, 0)
