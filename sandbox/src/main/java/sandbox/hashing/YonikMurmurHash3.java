@@ -17,7 +17,7 @@ package sandbox.hashing;
  *  <p>
  *  See http://github.com/yonik/java_util for future updates to this file.
  */
-public final class MurmurHash3 {
+public final class YonikMurmurHash3 {
 
     /** 128 bits of state */
     public static final class LongPair {

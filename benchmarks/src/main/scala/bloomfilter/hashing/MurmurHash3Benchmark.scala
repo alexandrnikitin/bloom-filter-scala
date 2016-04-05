@@ -2,8 +2,8 @@ package bloomfilter.hashing
 
 import java.nio.ByteBuffer
 
-import sandbox.hashing.{MurmurHash3 => jMurmurHash3, CassandraMurmurHash, AlgebirdMurmurHash128}
-import sandbox.hashing.MurmurHash3.LongPair
+import sandbox.hashing.{YonikMurmurHash3, CassandraMurmurHash, AlgebirdMurmurHash128}
+import sandbox.hashing.YonikMurmurHash3.LongPair
 import com.yahoo.sketches.hash.{MurmurHash3 => yMurmurHash3}
 import com.google.common.hash.Hashing
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
@@ -15,7 +15,7 @@ class MurmurHash3Benchmark {
 
   @Benchmark
   def javaVersion() = {
-    jMurmurHash3.murmurhash3_x64_128(key, 0, key.length, 0, new LongPair)
+    YonikMurmurHash3.murmurhash3_x64_128(key, 0, key.length, 0, new LongPair)
   }
 
   @Benchmark
