@@ -1,6 +1,7 @@
 package bloomfilter.hashing
 
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
+import sandbox.hashing.MurmurHash3
 
 @State(Scope.Benchmark)
 class MurmurHash3GenericBenchmark {

@@ -20,7 +20,7 @@ class MurmurHash3Benchmark {
 
   @Benchmark
   def scalaVersion() = {
-    MurmurHash3.murmurhash3_x64_128(key, 0, key.length, 0)
+    MurmurHash3Generic.murmurhash3_x64_128(key, 0, key.length, 0)
   }
 
   val guavaMurmur = Hashing.murmur3_128()
