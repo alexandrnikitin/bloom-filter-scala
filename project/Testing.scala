@@ -18,14 +18,6 @@ object Testing {
     scalaSource in EndToEndTest := baseDirectory.value / "src/endToEnd/scala"
   )
 
-  private lazy val btSettings = inConfig(BenchmarkTest)(Defaults.testSettings) ++ Seq(
-    fork in BenchmarkTest := false,
-    parallelExecution in BenchmarkTest := false,
-    scalaSource in BenchmarkTest := baseDirectory.value / "src/test/scala"
-    //testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
-    // TODO add JMH test framework
-  )
-
   private lazy val testAllSettings = Seq(
     testAll :=(),
     testAll <<= testAll.dependsOn(test in EndToEndTest),
@@ -39,5 +31,5 @@ object Testing {
     coverageExcludedPackages := ".*Benchmark"
   )
 
-  lazy val settings = testSettings ++ e2eSettings ++ btSettings ++ testAllSettings ++ scoverageSettings
+  lazy val settings = testSettings ++ e2eSettings ++ testAllSettings ++ scoverageSettings
 }
