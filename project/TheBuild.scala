@@ -17,6 +17,10 @@ object TheBuild extends Build {
       .configs(Configs.all: _*)
       .settings(Settings.sandbox: _*)
 
+  lazy val sandboxApp = Project("sandboxApp", file("sandboxApp"))
+      .configs(Configs.all: _*)
+      .settings(Settings.sandboxApp: _*)
+
   lazy val tests = Project("tests", file("tests"))
       .dependsOn(bloomFilter, sandbox)
       .configs(Configs.all: _*)
