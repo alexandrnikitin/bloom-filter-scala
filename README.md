@@ -15,7 +15,7 @@ in progress...
 ### Getting Started
 
 ```scala
-libraryDependencies += "com.github.alexandrnikitin" %% "bloom-filter" % "0.3.0"
+libraryDependencies += "com.github.alexandrnikitin" %% "bloom-filter" % "0.3.1"
 ```
 
 ```scala
