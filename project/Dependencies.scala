@@ -12,12 +12,13 @@ object Dependencies {
   private val algebird = "com.twitter" %% "algebird-core" % "0.11.0"
   private val sketches = "com.yahoo.datasketches" % "sketches-core" % "0.3.2"
   private val chronicleBytes = "net.openhft" % "chronicle-bytes" % "1.2.3"
+  private val allocationInstrumenter = "com.google.code.java-allocation-instrumenter" % "java-allocation-instrumenter" % "3.0.1"
 
   private val common = dependencies(silencer)
 
   val bloomfilter = common
   val sandbox = common ++ dependencies(chronicleBytes)
-  val sandboxApp = common
+  val sandboxApp = common ++ dependencies(allocationInstrumenter)
   val tests = common ++ dependencies(scalatest, scalacheck)
   val benchmarks = common ++ dependencies(googleGuava, googleFindbugs, breeze, breezeNatives, algebird, sketches)
 
