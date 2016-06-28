@@ -14,9 +14,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
 
     var i = 0
     while (i < numberOfHashes) {
-      val h = hash1 + i * hash2
-      val nextHash = if (h < 0) ~h else h
-      bits.set(nextHash % numberOfBits)
+      val computedHash = hash1 + i * hash2
+      bits.set((computedHash & Long.MaxValue) % numberOfBits)
       i += 1
     }
   }
@@ -27,9 +26,8 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
     val hash2 = (hash << 32) >> 32
     var i = 0
     while (i < numberOfHashes) {
-      val h = hash1 + i * hash2
-      val nextHash = if (h < 0) ~h else h
-      if (!bits.get(nextHash % numberOfBits))
+      val computedHash = hash1 + i * hash2
+      if (!bits.get((computedHash & Long.MaxValue) % numberOfBits))
         return false
       i += 1
     }
