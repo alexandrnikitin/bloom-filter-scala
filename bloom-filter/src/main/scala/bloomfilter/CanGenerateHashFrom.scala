@@ -1,13 +1,11 @@
 package bloomfilter
 
 import bloomfilter.hashing.MurmurHash3Generic
-import com.github.ghik.silencer.silent
 
 trait CanGenerateHashFrom[From] {
   def generateHash(from: From): Long
 }
 
-@silent
 object CanGenerateHashFrom {
 
   implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {

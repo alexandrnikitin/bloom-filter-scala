@@ -2,7 +2,6 @@ import sbt.Keys._
 import sbt._
 
 object Dependencies {
-  private val silencer = "com.github.ghik" % "silencer-lib" % "0.3"
   private val scalatest = "org.scalatest" %% "scalatest" % "2.2.6" % "test;endToEnd"
   private val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.0" % "test"
   private val googleGuava = "com.google.guava" % "guava" % "19.0"
@@ -14,7 +13,7 @@ object Dependencies {
   private val chronicleBytes = "net.openhft" % "chronicle-bytes" % "1.2.3"
   private val allocationInstrumenter = "com.google.code.java-allocation-instrumenter" % "java-allocation-instrumenter" % "3.0.1"
 
-  private val common = dependencies(silencer)
+  private val common = dependencies()
 
   val bloomfilter = common
   val sandbox = common ++ dependencies(chronicleBytes)

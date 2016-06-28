@@ -6,7 +6,6 @@ trait CanGenerate128HashFrom[From] {
   def generateHash(from: From): (Long, Long)
 }
 
-@com.github.ghik.silencer.silent
 object CanGenerate128HashFrom {
 
   implicit object CanGenerate128HashFromByteArray extends CanGenerate128HashFrom[Array[Byte]] {

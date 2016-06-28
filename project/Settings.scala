@@ -7,7 +7,6 @@ object Settings {
     scalaVersion := "2.11.7",
 
     autoCompilerPlugins := true,
-    addCompilerPlugin("com.github.ghik" % "silencer-plugin" % "0.3"),
 
     scalacOptions ++= ScalacSettings.base,
     javacOptions ++= JavacSettings.base,

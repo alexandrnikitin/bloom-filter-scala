@@ -1,7 +1,5 @@
 package bloomfilter
 
-import com.github.ghik.silencer.silent
-
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 trait CanGetDataFrom[-From] {
@@ -29,15 +27,14 @@ object CanGetDataFrom {
     }
   }
 
-  @silent
   implicit object CanGetDataFromArrayChar extends CanGetDataFrom[Array[Char]] {
 
     override def getLong(from: Array[Char], offset: Int): Long = {
-      unsafe.getLong(from, offset)
+      unsafe.getLong(from, offset.toLong)
     }
 
     override def getByte(from: Array[Char], offset: Int): Byte = {
-      unsafe.getByte(from, offset)
+      unsafe.getByte(from, offset.toLong)
     }
   }
 }
