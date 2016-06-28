@@ -64,3 +64,4 @@ Warning: These are synthetic benchmarks in isolated environment. Usually the dif
 
   [wiki-bloom-filter]: https://en.wikipedia.org/wiki/Bloom_filter
   [post]: https://alexandrnikitin.github.io/blog/bloom-filter-for-scala/
+  [github-benchmarks]: https://github.com/alexandrnikitin/bloom-filter-scala/tree/master/benchmarks/src/main/scala
