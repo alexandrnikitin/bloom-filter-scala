@@ -1,6 +1,7 @@
 import java.nio.charset.Charset
 import java.text.NumberFormat
 
+import bloomfilter.mutable.BloomFilter
 import com.google.monitoring.runtime.instrumentation.{AllocationRecorder, Sampler}
 import com.twitter.algebird.{BloomFilter => AlgebirdBloomFilter}
 
@@ -25,7 +26,35 @@ object SandboxApp {
     System.out.println(sb.toString())
   }
 
+
   def main(args: Array[String]): Unit = {
+    val itemsExpected = 1000000L
+    val falsePositiveRate = 0.01
+    val random = new Random()
+    val length: Int = 1024
+
+    val bf = BloomFilter[Array[Byte]](itemsExpected, falsePositiveRate)
+
+    val item = new Array[Byte](length)
+    random.nextBytes(item)
+    bf.add(item)
+
+    var i =0
+    while (i < 3000000) {
+      bf.mightContain(item)
+      i +=1
+    }
+
+    println("Warmup finished")
+    readLine()
+
+
+    i =0
+    while (i < 30000000) {
+      bf.mightContain(item)
+      i +=1
+    }
+
   }
 
   def compareAlgebirdFPR(): Unit = {
