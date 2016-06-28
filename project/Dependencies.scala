@@ -18,7 +18,7 @@ object Dependencies {
 
   val bloomfilter = common
   val sandbox = common ++ dependencies(chronicleBytes)
-  val sandboxApp = common ++ dependencies(allocationInstrumenter)
+  val sandboxApp = common ++ dependencies(allocationInstrumenter, algebird)
   val tests = common ++ dependencies(scalatest, scalacheck)
   val benchmarks = common ++ dependencies(googleGuava, googleFindbugs, breeze, breezeNatives, algebird, sketches)
 

@@ -18,6 +18,7 @@ object TheBuild extends Build {
       .settings(Settings.sandbox: _*)
 
   lazy val sandboxApp = Project("sandboxApp", file("sandboxApp"))
+      .dependsOn(bloomFilter)
       .configs(Configs.all: _*)
       .settings(Settings.sandboxApp: _*)
       .enablePlugins(JavaAppPackaging)
