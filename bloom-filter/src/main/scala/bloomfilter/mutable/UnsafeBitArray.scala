@@ -17,7 +17,9 @@ class UnsafeBitArray(numberOfBits: Long) {
     unsafe.putLong(offset, long | (1L << index))
   }
 
-  def getBitCount: Long = 0
+  def getBitCount: Long = {
+    throw new NotImplementedError("Not implemented yet")
+  }
 
   def dispose(): Unit = unsafe.freeMemory(ptr)
 }
