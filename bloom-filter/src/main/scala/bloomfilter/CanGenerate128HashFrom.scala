@@ -2,7 +2,7 @@ package bloomfilter
 
 import bloomfilter.hashing.MurmurHash3Generic
 
-trait CanGenerate128HashFrom[-From] {
+trait CanGenerate128HashFrom[From] {
   def generateHash(from: From): (Long, Long)
 }
 
