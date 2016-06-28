@@ -1,16 +1,17 @@
 ## Bloom filter for Scala
 
 [![Build Status](https://travis-ci.org/alexandrnikitin/bloom-filter-scala.svg?branch=master)](https://travis-ci.org/alexandrnikitin/bloom-filter-scala)
-[![codecov.io](https://codecov.io/github/alexandrnikitin/bloom-filter-scala/coverage.svg?branch=master)](https://codecov.io/github/alexandrnikitin/bloom-filter-scala?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.alexandrnikitin/bloom-filter_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.alexandrnikitin/bloom-filter_2.11)
-
-in progress...
 
 ### Overview
 
->A Bloom filter is a space-efficient probabilistic data structure that is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not. In other words, a query returns either "possibly in set" or "definitely not in set". Elements can be added to the set, but not removed
+>"A Bloom filter is a space-efficient probabilistic data structure that is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not. In other words, a query returns either "possibly in set" or "definitely not in set". Elements can be added to the set, but not removed," says [Wikipedia][wiki-bloom-filter].
 
-[More on wikipedia](https://en.wikipedia.org/wiki/Bloom_filter)
+What's Bloom filter in a nutshell:
+
+- Optimization for memory. It comes into play when you cannot put whole set into memory.
+- Solves the membership problem. It can answer one question: does an element belong to a set or not?
+- Probabilistic (lossy) data structure. It can answer that an element **probably belongs** to a set with some probability.
 
 ### Getting Started
 
@@ -29,21 +30,19 @@ bf.add(element)
 
 // Check whether an element in a set
 bf.mightContain(element)
+
+// Dispose the instance
+bf.dispose()
 ```
-
-TBA
-
-### Documentation
-
-TBA
 
 ### Motivation
 
-TBA
+You can read about this Bloom filter and motivation behind in [my blog post][post]
 
 ### Benchmarks
 
-Here's a benchmark for the `String` type:
+Here's a benchmark for the `String` type and results for other types are very similar to these:
+
 ```
 [info] Benchmark                                              (length)   Mode  Cnt          Score         Error  Units
 [info] alternatives.algebird.StringItemBenchmark.algebirdGet      1024  thrpt   20    1181080.172 ▒    9867.840  ops/s
@@ -59,4 +58,9 @@ Here's a benchmark for the `String` type:
 [info] bloomfilter.mutable._128bit.StringItemBenchmark.myPut      1024  thrpt   20   11303765.075 ▒   52581.059  ops/s
 ```
 
-TBA
+Basically, this implementation is 2x faster than Google's Guava and 10-80x than Twitter's Algebird. Other benchmarks you can find in [the "benchmarks' module on github][github-benchmarks]
+
+Warning: These are synthetic benchmarks in isolated environment. Usually the difference in throughput and latency is bigger in production system because it will stress the GC, lead to slow allocation paths and higher latencies, trigger the GC, etc.
+
+  [wiki-bloom-filter]: https://en.wikipedia.org/wiki/Bloom_filter
+  [post]: https://alexandrnikitin.github.io/blog/bloom-filter-for-scala/
