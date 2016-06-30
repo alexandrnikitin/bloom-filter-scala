@@ -12,6 +12,7 @@ object Dependencies {
   private val sketches = "com.yahoo.datasketches" % "sketches-core" % "0.3.2"
   private val chronicleBytes = "net.openhft" % "chronicle-bytes" % "1.2.3"
   private val allocationInstrumenter = "com.google.code.java-allocation-instrumenter" % "java-allocation-instrumenter" % "3.0.1"
+  private val stream = "com.clearspring.analytics" % "stream" % "2.7.0"
 
   private val common = dependencies()
 
@@ -19,7 +20,7 @@ object Dependencies {
   val sandbox = common ++ dependencies(chronicleBytes)
   val sandboxApp = common ++ dependencies(allocationInstrumenter, algebird)
   val tests = common ++ dependencies(scalatest, scalacheck)
-  val benchmarks = common ++ dependencies(googleGuava, googleFindbugs, breeze, breezeNatives, algebird, sketches)
+  val benchmarks = common ++ dependencies(googleGuava, googleFindbugs, breeze, breezeNatives, algebird, sketches, stream)
 
   private def dependencies(modules: ModuleID*): Seq[Setting[_]] = Seq(libraryDependencies ++= modules)
 }
