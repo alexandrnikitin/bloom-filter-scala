@@ -2,10 +2,12 @@ package bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
+class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
-  private val bits = new UnsafeBitArray(numberOfBits)
+  def this(numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
+    this(numberOfBits, numberOfHashes, new UnsafeBitArray(numberOfBits))
+  }
 
   def add(x: T): Unit = {
     val hash = canGenerateHash.generateHash(x)
@@ -18,6 +20,18 @@ class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
       bits.set((computedHash & Long.MaxValue) % numberOfBits)
       i += 1
     }
+  }
+
+  def union(that: BloomFilter[T]): BloomFilter[T] = {
+    require(this.numberOfBits == that.numberOfBits && this.numberOfHashes == that.numberOfHashes,
+      s"Union works only on BloomFilters with the same number of hashes and of bits")
+    new BloomFilter[T](this.numberOfBits, this.numberOfHashes, this.bits | that.bits)
+  }
+
+  def intersect(that: BloomFilter[T]): BloomFilter[T] = {
+    require(this.numberOfBits == that.numberOfBits && this.numberOfHashes == that.numberOfHashes,
+      s"Intersect works only on BloomFilters with the same number of hashes and of bits")
+    new BloomFilter[T](this.numberOfBits, this.numberOfHashes, this.bits & that.bits)
   }
 
   def mightContain(x: T): Boolean = {

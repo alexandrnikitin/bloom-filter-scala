@@ -2,7 +2,7 @@ package bloomfilter.mutable
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
-class UnsafeBitArray(numberOfBits: Long) {
+class UnsafeBitArray(val numberOfBits: Long) {
   private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
   private val ptr = unsafe.allocateMemory(indices)
   unsafe.setMemory(ptr, indices, 0.toByte)
@@ -16,6 +16,23 @@ class UnsafeBitArray(numberOfBits: Long) {
     val long = unsafe.getLong(offset)
     unsafe.putLong(offset, long | (1L << index))
   }
+
+  def combine(that: UnsafeBitArray, combiner: (Byte, Byte) => Byte): UnsafeBitArray = {
+    val result = new UnsafeBitArray(this.numberOfBits)
+    for (index <- 0L until (indices * 8)) {
+      val thisByte = unsafe.getByte(this.ptr + index)
+      val thatByte = unsafe.getByte(that.ptr + index)
+      val byteAtIndex = combiner(thisByte, thatByte)
+      unsafe.putByte(result.ptr + index, byteAtIndex.toByte)
+    }
+    result
+  }
+
+  def |(that: UnsafeBitArray): UnsafeBitArray =
+    combine(that, (b1: Byte, b2: Byte) => (b1 | b2).toByte)
+
+  def &(that: UnsafeBitArray): UnsafeBitArray =
+    combine(that, (b1: Byte, b2: Byte) => (b1 & b2).toByte)
 
   def getBitCount: Long = {
     throw new NotImplementedError("Not implemented yet")
