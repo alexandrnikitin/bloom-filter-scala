@@ -28,11 +28,17 @@ class UnsafeBitArray(val numberOfBits: Long) {
     result
   }
 
-  def |(that: UnsafeBitArray): UnsafeBitArray =
-    combine(that, (b1: Byte, b2: Byte) => (b1 | b2).toByte)
+  def |(that: UnsafeBitArray): UnsafeBitArray = {
+    require(this.numberOfBits == that.numberOfBits, "Bitwise OR works only on arrays with the same number of bits")
 
-  def &(that: UnsafeBitArray): UnsafeBitArray =
+    combine(that, (b1: Byte, b2: Byte) => (b1 | b2).toByte)
+  }
+
+  def &(that: UnsafeBitArray): UnsafeBitArray = {
+    require(this.numberOfBits == that.numberOfBits, "Bitwise AND works only on arrays with the same number of bits")
+
     combine(that, (b1: Byte, b2: Byte) => (b1 & b2).toByte)
+  }
 
   def getBitCount: Long = {
     throw new NotImplementedError("Not implemented yet")
