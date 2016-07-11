@@ -25,6 +25,7 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
   def union(that: BloomFilter[T]): BloomFilter[T] = {
     require(this.numberOfBits == that.numberOfBits && this.numberOfHashes == that.numberOfHashes,
       s"Union works only on BloomFilters with the same number of hashes and of bits")
+    // TODO number of bits
     new BloomFilter[T](this.numberOfBits, this.numberOfHashes, this.bits | that.bits)
   }
 
