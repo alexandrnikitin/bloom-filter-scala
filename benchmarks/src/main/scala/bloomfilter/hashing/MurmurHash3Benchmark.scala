@@ -7,6 +7,8 @@ import sandbox.hashing.YonikMurmurHash3.LongPair
 import com.yahoo.sketches.hash.{MurmurHash3 => yMurmurHash3}
 import com.google.common.hash.Hashing
 import org.openjdk.jmh.annotations.{Benchmark, Scope, State}
+import scala.util.hashing.{MurmurHash3 => ScalaMurmurHash3}
+import com.clearspring.analytics.hash.{MurmurHash => StreamLibMurmurHash}
 
 @State(Scope.Benchmark)
 class MurmurHash3Benchmark {
@@ -45,5 +47,15 @@ class MurmurHash3Benchmark {
   @Benchmark
   def yahooVersion() = {
     yMurmurHash3.hash(key, 0)
+  }
+
+  @Benchmark
+  def scalaStdlibVersion() = {
+    ScalaMurmurHash3.arrayHash(key, 0)
+  }
+
+  @Benchmark
+  def streamLibVersion() = {
+    StreamLibMurmurHash.hash(key)
   }
 }
