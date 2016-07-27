@@ -14,6 +14,7 @@ object TheBuild extends Build {
       .settings(Settings.bloomfilter: _*)
 
   lazy val sandbox = Project("sandbox", file("sandbox"))
+      .dependsOn(bloomFilter)
       .configs(Configs.all: _*)
       .settings(Settings.sandbox: _*)
 
