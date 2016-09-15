@@ -13,13 +13,14 @@ object Dependencies {
   private val chronicleBytes = "net.openhft" % "chronicle-bytes" % "1.2.3"
   private val allocationInstrumenter = "com.google.code.java-allocation-instrumenter" % "java-allocation-instrumenter" % "3.0.1"
   private val stream = "com.clearspring.analytics" % "stream" % "2.7.0"
-
+  private val junit = "junit" % "junit" % "4.12" % "test"
+  private val apacheCommons = "org.apache.commons" % "commons-lang3" % "3.0" % "test" // TODO remove it
   private val common = dependencies()
 
   val bloomfilter = common
-  val sandbox = common ++ dependencies(chronicleBytes)
+  val sandbox = common ++ dependencies(chronicleBytes, googleGuava, googleFindbugs)
   val sandboxApp = common ++ dependencies(allocationInstrumenter, algebird)
-  val tests = common ++ dependencies(scalatest, scalacheck)
+  val tests = common ++ dependencies(scalatest, scalacheck, junit, apacheCommons)
   val benchmarks = common ++ dependencies(googleGuava, googleFindbugs, breeze, breezeNatives, algebird, sketches, stream)
 
   private def dependencies(modules: ModuleID*): Seq[Setting[_]] = Seq(libraryDependencies ++= modules)
