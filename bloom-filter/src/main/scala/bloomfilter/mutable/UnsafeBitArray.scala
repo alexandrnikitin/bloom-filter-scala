@@ -4,8 +4,8 @@ import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeBitArray(val numberOfBits: Long) {
   private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
-  private val ptr = unsafe.allocateMemory(indices)
-  unsafe.setMemory(ptr, indices, 0.toByte)
+  private val ptr = unsafe.allocateMemory(8L*indices)
+  unsafe.setMemory(ptr, 8L*indices, 0.toByte)
 
   def get(index: Long): Boolean = {
     (unsafe.getLong(ptr + (index >>> 6)) & (1L << index)) != 0
