@@ -16,7 +16,7 @@ What's Bloom filter in a nutshell:
 ### Getting Started
 
 ```scala
-libraryDependencies += "com.github.alexandrnikitin" %% "bloom-filter" % "0.4.0"
+libraryDependencies += "com.github.alexandrnikitin" %% "bloom-filter" % "0.4.2"
 ```
 
 ```scala
