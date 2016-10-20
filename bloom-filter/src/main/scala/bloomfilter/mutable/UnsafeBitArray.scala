@@ -39,4 +39,16 @@ class UnsafeBitArray(val numberOfBits: Long) {
   }
 
   def dispose(): Unit = unsafe.freeMemory(ptr)
+
+  def dump():Array[Byte] = {
+    val bytes:Array[Byte] = Array.fill[Byte](indices.toInt*8)(0.toByte)
+    unsafe.copyMemory(
+      null,
+      ptr,
+      bytes,
+      sun.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET,
+      indices*8L);
+    bytes
+  }
+
 }

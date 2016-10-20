@@ -31,6 +31,10 @@ bf.add(element)
 // Check whether an element in a set
 bf.mightContain(element)
 
+// Serialize
+val bytes:Array[Byte] = bf.serialize()
+println(s"Dump: ${bytes.map("%02X " format _).mkString.dropRight(1)}")
+
 // Dispose the instance
 bf.dispose()
 ```
