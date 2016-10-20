@@ -8,11 +8,11 @@ class UnsafeBitArray(val numberOfBits: Long) {
   unsafe.setMemory(ptr, 8L*indices, 0.toByte)
 
   def get(index: Long): Boolean = {
-    (unsafe.getLong(ptr + (index >>> 6)) & (1L << index)) != 0
+    (unsafe.getLong(ptr + (index >>> 6)*8L) & (1L << index)) != 0
   }
 
   def set(index: Long): Unit = {
-    val offset = ptr + (index >>> 6)
+    val offset = ptr + (index >>> 6) * 8L
     val long = unsafe.getLong(offset)
     unsafe.putLong(offset, long | (1L << index))
   }
