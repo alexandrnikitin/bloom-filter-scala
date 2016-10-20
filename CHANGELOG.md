@@ -1,3 +1,7 @@
+### 0.4.2
+
+- Fix memory access in UnsafeBitArray. Must update. Thanks to @cmarxer (via e79ff243ac)
+
 ### 0.4.1
 
 - Fix memory allocation in UnsafeBitArray. Must update. Thanks to @cmarxer (via \#9)
