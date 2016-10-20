@@ -15,7 +15,6 @@ class BloomFilterSpec extends Properties("BloomFilter_128bit") {
 
   override def overrideParameters(p: Parameters): Parameters = {
     super.overrideParameters(p).withMinSuccessfulTests(1000)
-    // TODO waiting for an issue to be solved https://github.com/rickynils/scalacheck/issues/233
   }
 
   class BloomFilterCommands[T: Arbitrary](implicit canGenerateHash: CanGenerate128HashFrom[T]) extends Commands {
