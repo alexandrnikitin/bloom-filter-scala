@@ -10,6 +10,7 @@ object Settings {
 
     scalacOptions ++= ScalacSettings.base,
     javacOptions ++= JavacSettings.base,
+    javaOptions += "-Xmx1G",
     organization := "com.github.alexandrnikitin"
   )
 
