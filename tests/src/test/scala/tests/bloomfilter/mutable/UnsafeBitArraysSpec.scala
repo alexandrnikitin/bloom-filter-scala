@@ -14,11 +14,9 @@ class UnsafeBitArraysSpec extends Properties("UnsafeBitArray") {
 
   val genUnion = for {
     size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2)
-    array = new UnsafeBitArray(size)
     indices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
-    thatArray = new UnsafeBitArray(size)
     thatIndices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
-  } yield (array, indices, thatArray, thatIndices)
+  } yield (size, indices, thatIndices)
 
   val genIntersection = for {
     size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2)
@@ -27,24 +25,42 @@ class UnsafeBitArraysSpec extends Properties("UnsafeBitArray") {
     thatArray = new UnsafeBitArray(size)
     thatIndices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
     commonIndices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
-  } yield (array, indices, thatArray, thatIndices, commonIndices)
+  } yield (size, indices, thatIndices, commonIndices)
 
 
   property("|") = forAll(genUnion) {
-    case (array: UnsafeBitArray, indices: List[Long], thatArray: UnsafeBitArray, thatIndices: List[Long]) =>
+    case (size: Long, indices: List[Long], thatIndices: List[Long]) =>
+      val array = new UnsafeBitArray(size)
       indices.foreach(array.set)
+      val thatArray = new UnsafeBitArray(size)
       thatIndices.foreach(thatArray.set)
+
       val sut = array | thatArray
-      (indices ++ thatIndices).forall(sut.get)
+      val result = (indices ++ thatIndices).forall(sut.get)
+
+      array.dispose()
+      thatArray.dispose()
+      sut.dispose()
+
+      result
   }
 
   property("&") = forAll(genIntersection) {
-    case (array: UnsafeBitArray, indices: List[Long], thatArray: UnsafeBitArray, thatIndices: List[Long], commonIndices: List[Long]) =>
+    case (size: Long, indices: List[Long], thatIndices: List[Long], commonIndices: List[Long]) =>
+      val array = new UnsafeBitArray(size)
       indices.foreach(array.set)
+      val thatArray = new UnsafeBitArray(size)
       thatIndices.foreach(thatArray.set)
       commonIndices.foreach(x => { thatArray.set(x); thatArray.set(x) })
+
       val sut = array & thatArray
-      commonIndices.forall(sut.get)
+      val result = commonIndices.forall(sut.get)
+
+      array.dispose()
+      thatArray.dispose()
+      sut.dispose()
+
+      result
   }
 
 }
