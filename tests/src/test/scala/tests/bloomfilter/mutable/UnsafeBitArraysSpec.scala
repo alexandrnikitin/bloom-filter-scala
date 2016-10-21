@@ -1,30 +1,25 @@
 package tests.bloomfilter.mutable
 
 import bloomfilter.mutable.UnsafeBitArray
-import org.scalacheck.Arbitrary._
-import org.scalacheck.{Gen, Properties}
 import org.scalacheck.Prop._
+import org.scalacheck.{Gen, Properties}
 
 class UnsafeBitArraysSpec extends Properties("UnsafeBitArray") {
-  def genListElems[A](max: Int)(implicit aGen: Gen[A]): Gen[List[A]] = {
-    Gen.posNum[Int].map(_ % max).flatMap(i => Gen.listOfN(i, aGen))
+  def genListElems[A](max: Long)(implicit aGen: Gen[A]): Gen[List[A]] = {
+    Gen.posNum[Int].map(_ % max).flatMap(i => Gen.listOfN(math.min(i, Int.MaxValue).toInt, aGen))
   }
 
-  val numOfSetBits: Int = 100
-
   val genUnion = for {
-    size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2)
-    indices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
-    thatIndices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
+    size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2L)
+    indices <- genListElems[Long](size)(Gen.chooseNum(0, size))
+    thatIndices <- genListElems[Long](size)(Gen.chooseNum(0, size))
   } yield (size, indices, thatIndices)
 
   val genIntersection = for {
-    size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2)
-    array = new UnsafeBitArray(size)
-    indices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
-    thatArray = new UnsafeBitArray(size)
-    thatIndices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
-    commonIndices <- genListElems[Long]((numOfSetBits % size).toInt)(arbitrary[Long])
+    size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2L)
+    indices <- genListElems[Long](size)(Gen.chooseNum(0, size))
+    thatIndices <- genListElems[Long](size)(Gen.chooseNum(0, size))
+    commonIndices <- genListElems[Long](size)(Gen.chooseNum(0, size))
   } yield (size, indices, thatIndices, commonIndices)
 
 
@@ -51,7 +46,7 @@ class UnsafeBitArraysSpec extends Properties("UnsafeBitArray") {
       indices.foreach(array.set)
       val thatArray = new UnsafeBitArray(size)
       thatIndices.foreach(thatArray.set)
-      commonIndices.foreach(x => { thatArray.set(x); thatArray.set(x) })
+      commonIndices.foreach(x => { array.set(x); thatArray.set(x) })
 
       val sut = array & thatArray
       val result = commonIndices.forall(sut.get)
