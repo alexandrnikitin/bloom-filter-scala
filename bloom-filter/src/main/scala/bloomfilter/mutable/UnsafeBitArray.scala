@@ -17,22 +17,30 @@ class UnsafeBitArray(val numberOfBits: Long) {
     unsafe.putLong(offset, long | (1L << index))
   }
 
-  def combine(that: UnsafeBitArray, combiner: (Byte, Byte) => Byte): UnsafeBitArray = {
+  def combine(that: UnsafeBitArray, combiner: (Long, Long) => Long): UnsafeBitArray = {
     val result = new UnsafeBitArray(this.numberOfBits)
-    for (index <- 0L until (indices * 8)) {
-      val thisByte = unsafe.getByte(this.ptr + index)
-      val thatByte = unsafe.getByte(that.ptr + index)
-      val byteAtIndex = combiner(thisByte, thatByte)
-      unsafe.putByte(result.ptr + index, byteAtIndex.toByte)
+    var index = 0L
+    while (index < numberOfBits) {
+      val thisLong = unsafe.getLong(this.ptr + (index >>> 6) * 8L)
+      val thatLong = unsafe.getLong(that.ptr + (index >>> 6) * 8L)
+      val longAtIndex = combiner(thisLong, thatLong)
+      unsafe.putLong(result.ptr + (index >>> 6) * 8L, longAtIndex)
+      index += 64
     }
     result
   }
 
-  def |(that: UnsafeBitArray): UnsafeBitArray =
-    combine(that, (b1: Byte, b2: Byte) => (b1 | b2).toByte)
+  def |(that: UnsafeBitArray): UnsafeBitArray = {
+    require(this.numberOfBits == that.numberOfBits, "Bitwise OR works only on arrays with the same number of bits")
 
-  def &(that: UnsafeBitArray): UnsafeBitArray =
-    combine(that, (b1: Byte, b2: Byte) => (b1 & b2).toByte)
+    combine(that, _ | _)
+  }
+
+  def &(that: UnsafeBitArray): UnsafeBitArray = {
+    require(this.numberOfBits == that.numberOfBits, "Bitwise AND works only on arrays with the same number of bits")
+
+    combine(that, _ & _)
+  }
 
   def getBitCount: Long = {
     throw new NotImplementedError("Not implemented yet")
