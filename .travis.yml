@@ -21,6 +21,7 @@ before_install:
   - pip install --user codecov
 
 after_success:
+  - '[[ $TRAVIS_BRANCH == "master" ]] && { sbt publishSigned; };'
   - codecov
 env:
   global:
