@@ -51,4 +51,12 @@ class UnsafeBitArray(val numberOfBits: Long) {
     bytes
   }
 
+  def setArray(a:Array[Byte]) = {
+    assert(a.length == indices*8L, "array length mismatch")
+    for (index <- 0L to indices*8L-1L) {
+      val current = unsafe.getByte(ptr+index)
+      unsafe.putByte(ptr+index, (current | a(index.toInt)).toByte)
+    }
+  }
+
 }

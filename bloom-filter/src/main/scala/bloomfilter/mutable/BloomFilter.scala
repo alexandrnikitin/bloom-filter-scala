@@ -56,6 +56,8 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
 
   def serialize(): Array[Byte] = bits.dump()
 
+  def restoreArray(a: Array[Byte]): Unit = bits.setArray(a)
+
 }
 
 object BloomFilter {
