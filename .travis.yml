@@ -23,6 +23,7 @@ before_install:
 
 after_success:
   - '[[ $TRAVIS_BRANCH == "master" ]] && { sbt publishSigned; };'
+  - '[[ $TRAVIS_TAG == v[0-9.]* ]] && { sbt sonatypeRelease; };'
   - codecov
 env:
   global:
