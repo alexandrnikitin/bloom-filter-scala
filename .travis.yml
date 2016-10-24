@@ -13,6 +13,8 @@ cache:
   - "$HOME/.m2"
   - "$HOME/.ivy2/cache"
   - "$HOME/.sbt"
+git:
+  depth: 1
 before_install:
 - openssl aes-256-cbc -K $encrypted_0e676a27a86e_key -iv $encrypted_0e676a27a86e_iv
   -in secring.gpg.enc -out secring.gpg -d
