@@ -1,4 +1,4 @@
-import com.typesafe.sbt.pgp.PgpSettings.pgpPassphrase
+import com.typesafe.sbt.pgp.PgpSettings._
 import sbt.Keys._
 import sbt._
 
@@ -11,9 +11,10 @@ object Publishing {
     } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
   )
 
-  private lazy val pgpPassphraseSettings =
+  private lazy val pgpSettings =
     Option(System.getenv().get("PGP_PASSPHRASE"))
-        .map(s => pgpPassphrase := Some(s.toCharArray)).toSeq
+        .map(s => pgpPassphrase := Some(s.toCharArray)).toSeq ++
+        Seq(pgpSecretRing := file(".travis/secring.gpg"))
 
   private lazy val sharedSettings = Seq(
     publishMavenStyle := true,
@@ -35,7 +36,7 @@ object Publishing {
     developers := List(Developer("AlexandrNikitin", "Alexandr Nikitin", "nikitin.alexandr.a@gmail.com", url("https://github.com/alexandrnikitin/")))
   )
 
-  lazy val settings = generalSettings ++ sharedSettings ++ credentialSettings ++ pgpPassphraseSettings
+  lazy val settings = generalSettings ++ sharedSettings ++ credentialSettings ++ pgpSettings
 
   lazy val noPublishSettings = Seq(
     publish :=(),
