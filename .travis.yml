@@ -19,7 +19,7 @@ cache:
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_f071478696cb_key -iv $encrypted_f071478696cb_iv
-    -in .travis/secring.gpg.enc -out .travis/secring.gpg -d
+    -in secring.gpg.enc -out secring.gpg -d
   - pip install --user codecov
 
 after_success:

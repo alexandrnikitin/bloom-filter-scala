@@ -14,7 +14,7 @@ object Publishing {
   private lazy val pgpSettings =
     Option(System.getenv().get("PGP_PASSPHRASE"))
         .map(s => pgpPassphrase := Some(s.toCharArray)).toSeq ++
-        Seq(pgpSecretRing := file(".travis/secring.gpg"))
+        Seq(pgpSecretRing := file("secring.gpg"))
 
   private lazy val sharedSettings = Seq(
     publishMavenStyle := true,
