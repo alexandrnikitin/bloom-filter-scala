@@ -1,3 +1,7 @@
+### 0.6.0
+
+- \#2 Scala 2.10 support.
+
 ### 0.5.0
 
 - \#4 Union and intersection of two Bloom filters (via \#6). Thanks to Mario Pastorelli @melrief.
