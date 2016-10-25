@@ -21,8 +21,8 @@ before_install:
 - openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in credentials.sbt.enc -out local.credentials.sbt -d
 - pip install --user codecov
 after_success:
-- '[[ $TRAVIS_BRANCH == "master" ]] && { sbt publishSigned; };'
-- "[[ $TRAVIS_TAG == v[0-9.]* ]] && { sbt sonatypeRelease; };"
+- '[[ $TRAVIS_BRANCH == "master" ]] && { sbt ++$TRAVIS_SCALA_VERSION publishSigned; };'
+- "[[ $TRAVIS_TAG == v[0-9.]* ]] && { sbt ++$TRAVIS_SCALA_VERSION sonatypeRelease; };"
 - codecov
 env:
   global:
