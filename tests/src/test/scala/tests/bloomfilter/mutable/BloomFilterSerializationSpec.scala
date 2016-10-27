@@ -12,7 +12,7 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") {
   }
 
   val gen = for {
-    size <- Gen.oneOf[Long](1, 1000, Int.MaxValue, Int.MaxValue * 2L)
+    size <- Gen.oneOf[Long](1, 1000/*, Int.MaxValue.toLong + 1*/)
     indices <- genListElems[Long](size)(Gen.chooseNum(0, size))
   } yield (size, indices)
 
@@ -22,13 +22,16 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") {
       indices.foreach(initial.add)
 
       val file = File.createTempFile("bloomFilterSerialized", ".tmp")
-      val out = new FileOutputStream(file)
+      val out = new BufferedOutputStream(new FileOutputStream(file), 10 * 1000 * 1000)
       initial.writeTo(out)
-      val in = new FileInputStream(file)
+      out.close()
+      val in = new BufferedInputStream(new FileInputStream(file), 10 * 1000 * 1000)
       val sut = BloomFilter.readFrom[Long](in)
+      in.close()
 
       val result = indices.forall(sut.mightContain)
 
+      file.delete()
       initial.dispose()
       sut.dispose()
 
