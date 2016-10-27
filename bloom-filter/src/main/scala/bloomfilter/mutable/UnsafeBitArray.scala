@@ -1,5 +1,7 @@
 package bloomfilter.mutable
 
+import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
+
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeBitArray(val numberOfBits: Long) {
@@ -44,6 +46,24 @@ class UnsafeBitArray(val numberOfBits: Long) {
 
   def getBitCount: Long = {
     throw new NotImplementedError("Not implemented yet")
+  }
+
+  def writeTo(out: OutputStream): Unit = {
+    val dout = new DataOutputStream(out)
+    var index = 0L
+    while (index < numberOfBits) {
+      dout.writeLong(unsafe.getLong(this.ptr + (index >>> 6) * 8L))
+      index += 64
+    }
+  }
+
+  def readFrom(in: InputStream): Unit = {
+    val din = new DataInputStream(in)
+    var index = 0L
+    while (index < numberOfBits) {
+      unsafe.putLong(this.ptr + (index >>> 6) * 8L, din.readLong())
+      index += 64
+    }
   }
 
   def dispose(): Unit = unsafe.freeMemory(ptr)
