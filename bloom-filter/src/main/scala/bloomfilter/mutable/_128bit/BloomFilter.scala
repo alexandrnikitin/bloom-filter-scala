@@ -5,10 +5,12 @@ import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
 import bloomfilter.CanGenerate128HashFrom
 import bloomfilter.mutable.UnsafeBitArray
 
-class BloomFilter[T](numberOfBits: Long, numberOfHashes: Int)
+class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
     (implicit canGenerateHash: CanGenerate128HashFrom[T]) {
 
-  private val bits = new UnsafeBitArray(numberOfBits)
+  def this(numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerate128HashFrom[T]) {
+    this(numberOfBits, numberOfHashes, new UnsafeBitArray(numberOfBits))
+  }
 
   def add(x: T): Unit = {
     val hash = canGenerateHash.generateHash(x)
@@ -67,7 +69,7 @@ object BloomFilter {
     math.ceil(numberOfBits / numberOfItems * math.log(2)).toInt
   }
 
-  def readFrom[T](in: InputStream)(implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
+  def readFrom[T](in: InputStream)(implicit canGenerateHash: CanGenerate128HashFrom[T]): BloomFilter[T] = {
     val din = new DataInputStream(in)
     val numberOfBits = din.readLong()
     val numberOfHashes = din.readInt()
