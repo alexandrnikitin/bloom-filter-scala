@@ -1,5 +1,7 @@
 package bloomfilter.mutable
 
+import java.io.{InputStream, OutputStream}
+
 import bloomfilter.CanGenerateHashFrom
 
 class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
@@ -52,6 +54,10 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     math.pow(bits.getBitCount.toDouble / numberOfBits, numberOfHashes.toDouble)
   }
 
+  def writeTo(out: OutputStream): Unit = {
+  }
+
+
   def dispose(): Unit = bits.dispose()
 
 }
@@ -72,6 +78,10 @@ object BloomFilter {
 
   def optimalNumberOfHashes(numberOfItems: Long, numberOfBits: Long): Int = {
     math.ceil(numberOfBits / numberOfItems * math.log(2)).toInt
+  }
+
+  def readFrom[T](in: InputStream)(implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
+    new BloomFilter[T](10000L, 3)
   }
 
 }
