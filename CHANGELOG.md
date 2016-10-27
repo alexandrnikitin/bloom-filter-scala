@@ -1,3 +1,7 @@
+### 0.7.0
+
+- \#5 Add serialization support.
+
 ### 0.6.0
 
 - \#2 Scala 2.10 support.
