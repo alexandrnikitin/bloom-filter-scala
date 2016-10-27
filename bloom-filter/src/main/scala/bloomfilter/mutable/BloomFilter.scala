@@ -1,6 +1,6 @@
 package bloomfilter.mutable
 
-import java.io.{InputStream, OutputStream}
+import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
 
 import bloomfilter.CanGenerateHashFrom
 
@@ -55,6 +55,10 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
   }
 
   def writeTo(out: OutputStream): Unit = {
+    val dout = new DataOutputStream(out)
+    dout.writeLong(numberOfBits)
+    dout.writeInt(numberOfHashes)
+    bits.writeTo(out)
   }
 
 
@@ -81,7 +85,12 @@ object BloomFilter {
   }
 
   def readFrom[T](in: InputStream)(implicit canGenerateHash: CanGenerateHashFrom[T]): BloomFilter[T] = {
-    new BloomFilter[T](10000L, 3)
+    val din = new DataInputStream(in)
+    val numberOfBits = din.readLong()
+    val numberOfHashes = din.readInt()
+    val bits = new UnsafeBitArray(numberOfBits)
+    bits.readFrom(in)
+    new BloomFilter[T](numberOfBits, numberOfHashes, bits)
   }
 
 }
