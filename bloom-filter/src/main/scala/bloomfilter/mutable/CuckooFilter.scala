@@ -34,7 +34,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
 
     // TODO sort out
     random += 1
-    val r = random % 4
+    val r = random & (4 - 1)
     var oldtag2 = bits.readTag(curindex, r)
     bits.writeTag(curindex, r, curtag)
     curtag = oldtag2

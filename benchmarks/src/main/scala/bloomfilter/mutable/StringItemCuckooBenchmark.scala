@@ -42,8 +42,7 @@ class StringItemCuckooBenchmark {
   }
 
   @Benchmark
-  @BenchmarkMode(Array(Mode.SingleShotTime))
-  @OutputTimeUnit(TimeUnit.NANOSECONDS)
+  @BenchmarkMode(Array(Mode.Throughput))
   @OperationsPerInvocation(10000)
   def myGet(): Unit = {
     var i = 0

@@ -60,7 +60,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
     }
 
     random += 1
-    val r =  random % tagsPerBucket
+    val r =  random & (tagsPerBucket - 1)
     oldtagToRet = readTag(index, r)
     writeTag(index, r, tag)
 
