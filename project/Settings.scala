@@ -16,8 +16,7 @@ object Settings {
   )
 
   lazy val root = build ++ Testing.settings ++ Publishing.noPublishSettings
-  lazy val bloomfilter = build ++ Testing.settings ++ Dependencies.bloomfilter ++ Publishing.settings ++
-      (scalacOptions ++= ScalacSettings.strictBase ++ ScalacSettings.strictSpecificFor(scalaVersion.value))
+  lazy val bloomfilter = build ++ Testing.settings ++ Dependencies.bloomfilter ++ Publishing.settings
   lazy val sandbox = build ++ Testing.settings ++ Dependencies.sandbox ++ Publishing.noPublishSettings
   lazy val sandboxApp = build ++ Dependencies.sandboxApp ++ Publishing.noPublishSettings
   lazy val tests = build ++ Testing.settings ++ Dependencies.tests ++ Publishing.noPublishSettings
@@ -50,13 +49,6 @@ object Settings {
     }
 
 
-    val strictBase = Seq(
-      "-Xfatal-warnings",
-      "-Xlint",
-      "-Ywarn-dead-code",
-      //"-Ywarn-numeric-widen",
-      "-Ywarn-value-discard"
-    )
 
     def strictSpecificFor(scalaVersion: String) = CrossVersion.partialVersion(scalaVersion) match {
       case Some((2, 11)) => Seq("-Ywarn-unused", "-Ywarn-unused-import")

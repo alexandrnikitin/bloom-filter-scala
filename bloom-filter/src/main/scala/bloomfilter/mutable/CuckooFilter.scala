@@ -70,7 +70,7 @@ object CuckooFilter {
   // TODO falsePositiveRate?
   def apply[T](numberOfItems: Long)(implicit canGenerateHash: CanGenerateHashFrom[T]): CuckooFilter[T] = {
     val nb = optimalNumberOfBuckets(numberOfItems)
-    new CuckooFilter[T](nb, 12)
+    new CuckooFilter[T](nb, 8)
   }
 
   def optimalNumberOfBuckets(numberOfItems: Long): Long = {

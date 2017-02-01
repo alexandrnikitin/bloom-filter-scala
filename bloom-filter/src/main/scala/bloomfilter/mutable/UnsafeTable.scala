@@ -11,25 +11,25 @@ class UnsafeTable(val numberOfBuckets: Long, numberOfBitsPerItem: Int) {
   unsafe.setMemory(ptr, bytesPerBucket * numberOfBuckets, 0.toByte)
 
   def readTag(bucketIndex: Long, tagIndex: Int): Long = {
-    var p = bucketIndex * bytesPerBucket
+    var p = ptr + bucketIndex * bytesPerBucket
     var tag = 0
     /* following code only works for little-endian */
     if (numberOfBitsPerItem == 2) {
-      tag = unsafe.getByte(ptr + p) >> (tagIndex * 2)
+      tag = unsafe.getByte(p) >> (tagIndex * 2)
     } else if (numberOfBitsPerItem == 4) {
       p += (tagIndex >> 1)
-      tag = unsafe.getByte(ptr + p) >> ((tagIndex & 1) << 2)
+      tag = unsafe.getByte(p) >> ((tagIndex & 1) << 2)
     } else if (numberOfBitsPerItem == 8) {
       p += tagIndex
-      tag = unsafe.getByte(ptr + p)
+      tag = unsafe.getByte(p)
     } else if (numberOfBitsPerItem == 12) {
       p += tagIndex + (tagIndex >> 1)
-      tag = unsafe.getShort(ptr + p) >> ((tagIndex & 1) << 2)
+      tag = unsafe.getShort(p) >> ((tagIndex & 1) << 2)
     } else if (numberOfBitsPerItem == 16) {
       p += (tagIndex << 1)
-      tag = unsafe.getShort(ptr + p)
+      tag = unsafe.getShort(p)
     } else if (numberOfBitsPerItem == 32) {
-      tag = unsafe.getInt(ptr + p + tagIndex * 4)
+      tag = unsafe.getInt(p + tagIndex * 4)
     }
 
     tag & tagMask
@@ -37,19 +37,19 @@ class UnsafeTable(val numberOfBuckets: Long, numberOfBitsPerItem: Int) {
 
 
   def writeTag(i: Long, j: Int, t: Long): Unit = {
-    var p = i * bytesPerBucket
+    var p = ptr + i * bytesPerBucket
     val tag = t & tagMask
     /* following code only works for little-endian */
     if (numberOfBitsPerItem == 2) {
-      val b = unsafe.getByte(ptr + p)
+      val b = unsafe.getByte(p)
       unsafe.putByte(p, (b | tag << (2 * j)).toByte)
     } else if (numberOfBitsPerItem == 4) {
       p += (j >> 1)
       if ((j & 1) == 0) {
-        val b = unsafe.getByte(ptr + p)
+        val b = unsafe.getByte(p)
         unsafe.putByte(p, (b & 0xf0| tag).toByte)
       } else {
-        val b = unsafe.getByte(ptr + p)
+        val b = unsafe.getByte(p)
         unsafe.putByte(p, (b & 0x0f | (tag << 4)).toByte)
       }
     } else if (numberOfBitsPerItem == 8) {
@@ -57,10 +57,10 @@ class UnsafeTable(val numberOfBuckets: Long, numberOfBitsPerItem: Int) {
     } else if (numberOfBitsPerItem == 12) {
       p += (j + (j >> 1))
       if ((j & 1) == 0) {
-        val b = unsafe.getShort(ptr + p)
+        val b = unsafe.getShort(p)
         unsafe.putShort(p, (b & 0xf000| tag).toShort)
       } else {
-        val b = unsafe.getShort(ptr + p)
+        val b = unsafe.getShort(p)
         unsafe.putShort(p, (b & 0x000f | (tag << 4)).toShort)
       }
     } else if (numberOfBitsPerItem == 16) {
@@ -72,14 +72,13 @@ class UnsafeTable(val numberOfBuckets: Long, numberOfBitsPerItem: Int) {
 
   def insert(index: Long, tag: Long, kickout: Boolean): (Boolean, Long) = {
     var oldtagToRet = 0L
-    var i = 0
-    while (i < tagsPerBucket) {
-      if (readTag(index, i) == 0) {
-        writeTag(index, i, tag)
+    var tagIndex = 0
+    while (tagIndex < tagsPerBucket) {
+      if (readTag(index, tagIndex) == 0) {
+        writeTag(index, tagIndex, tag)
         return (true, oldtagToRet)
       }
-
-      i += 1
+      tagIndex += 1
     }
 
     if (kickout) {
