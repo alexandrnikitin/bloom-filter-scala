@@ -45,7 +45,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
 
 
     case class SetItem(index: Long, tag: Long) extends UnitCommand {
-      def run(sut: Sut): Unit = sut.synchronized(sut.insert(index, tag, kickout = false))
+      def run(sut: Sut): Unit = sut.synchronized(sut.insert(index, tag))
       def nextState(state: State): State =  state.copy(addedItems = state.addedItems + 1)
       def preCondition(state: State) = true
       def postCondition(state: State, success: Boolean): Prop = success
@@ -53,9 +53,123 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
 
     case class GetItem(index: Long, tag: Long) extends SuccessCommand {
       type Result = Boolean
-      def run(sut: Sut): Boolean = sut.synchronized(sut.find(index, 0, tag))
+      def run(sut: Sut): Boolean = sut.synchronized(sut.find(index, tag))
       def nextState(state: State): State = state
       def preCondition(state: State) = true
+      def postCondition(state: State, result: Boolean): Prop = result
+    }
+
+  }
+
+}
+
+class UnsafeTableV2Spec extends Properties("UnsafeTableV2Spec") {
+
+  property("writeTag & readTag") = new UnsafeTableCommands().property()
+
+  override def overrideParameters(p: Parameters): Parameters = {
+    super.overrideParameters(p).withMinSuccessfulTests(1000)
+  }
+
+  class UnsafeTableCommands extends Commands {
+    type Sut = UnsafeTable
+
+    case class State(numberOfBuckets: Long, addedItems: Long)
+
+    override def canCreateNewSut(
+        newState: State,
+        initSuts: Traversable[State],
+        runningSuts: Traversable[Sut]): Boolean =
+      initSuts.isEmpty && runningSuts.isEmpty ||
+          newState.addedItems >= newState.numberOfBuckets ||
+          newState.addedItems > 100
+
+    override def destroySut(sut: Sut): Unit =
+      sut.dispose()
+
+    override def genInitialState: Gen[State] =
+      Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
+
+    override def newSut(state: State): Sut =
+      new UnsafeTable(state.numberOfBuckets, 8)
+
+    def initialPreCondition(state: State): Boolean = true
+
+    def genCommand(state: State): Gen[Command] =
+      for {
+        index <- Gen.choose[Long](0, state.numberOfBuckets)
+        tagIndex <- Gen.choose[Int](0, 3)
+        tag <- Gen.choose[Byte](0, Byte.MaxValue)
+      } yield commandSequence(WriteTag(index, tagIndex, tag), ReadTag(index, tagIndex, tag))
+
+    case class WriteTag(index: Long, tagIndex:Int, tag: Byte) extends UnitCommand {
+      def run(sut: Sut): Unit = sut.synchronized(sut.writeTag(index, tagIndex, tag))
+      def nextState(state: State): State =  state.copy(addedItems = state.addedItems + 1)
+      def preCondition(state: State) = true
+      def postCondition(state: State, success: Boolean): Prop = success
+    }
+
+    case class ReadTag(index: Long, tagIndex:Int, tag: Byte) extends SuccessCommand {
+      type Result = Boolean
+      def run(sut: Sut): Boolean = sut.synchronized(sut.readTag(index, tagIndex) == tag)
+      def nextState(state: State): State = state
+      def preCondition(state: State) = true
+      def postCondition(state: State, result: Boolean): Prop = result
+    }
+
+  }
+
+}
+
+
+class UnsafeTableV3Spec extends Properties("UnsafeTableV2Spec") {
+
+  property("insert & find") = new UnsafeTableCommands().property()
+
+  override def overrideParameters(p: Parameters): Parameters = {
+    super.overrideParameters(p).withMinSuccessfulTests(1000)
+  }
+
+  class UnsafeTableCommands extends Commands {
+    type Sut = UnsafeTable
+
+    case class State(numberOfBuckets: Long, addedItems: Long)
+
+    override def canCreateNewSut(
+        newState: State,
+        initSuts: Traversable[State],
+        runningSuts: Traversable[Sut]): Boolean =
+      initSuts.isEmpty && runningSuts.isEmpty
+
+    override def destroySut(sut: Sut): Unit =
+      sut.dispose()
+
+    override def genInitialState: Gen[State] =
+      Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
+
+    override def newSut(state: State): Sut =
+      new UnsafeTable(state.numberOfBuckets, 8)
+
+    def initialPreCondition(state: State): Boolean = true
+
+    def genCommand(state: State): Gen[Command] =
+      for {
+        index <- Gen.choose[Long](0, state.numberOfBuckets - 1)
+        tag <- Gen.choose[Byte](0, Byte.MaxValue)
+      } yield commandSequence(Insert(index, tag), Find(index, tag))
+
+    case class Insert(index: Long, tag: Byte) extends UnitCommand {
+      def run(sut: Sut): Unit = sut.synchronized(sut.insert(index, tag))
+      def nextState(state: State): State =  state.copy(addedItems = state.addedItems + 1)
+      def preCondition(state: State) = state.addedItems <= state.numberOfBuckets || state.addedItems < 4
+      def postCondition(state: State, success: Boolean): Prop = success
+    }
+
+    case class Find(index: Long, tag: Byte) extends SuccessCommand {
+      type Result = Boolean
+      def run(sut: Sut): Boolean = sut.synchronized(sut.find(index, tag))
+      def nextState(state: State): State = state
+      def preCondition(state: State) = state.addedItems <= state.numberOfBuckets  || state.addedItems < 4
       def postCondition(state: State, result: Boolean): Prop = result
     }
 

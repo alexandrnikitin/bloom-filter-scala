@@ -23,7 +23,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     var i = 0
     while (i < MaxAttempts) {
       val kickout = i > 0
-      val (success, oldtag) = bits.insert(curindex, curtag, kickout)
+      val (success, oldtag) = bits.insertWithReplace(curindex, curtag)
       if (success) {
         numberOfItems += 1
         return
@@ -45,7 +45,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     val index2 = altIndex(index, tag)
     // TODO remove
     assert(index == altIndex(index2, tag))
-    bits.find(index, index2, tag)
+    bits.findBoth(index, index2, tag)
   }
 
   def dispose(): Unit = bits.dispose()
