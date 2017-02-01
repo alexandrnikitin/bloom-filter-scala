@@ -14,7 +14,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
 
 
   override def overrideParameters(p: Parameters): Parameters = {
-    super.overrideParameters(p).withMinSuccessfulTests(1000)
+    super.overrideParameters(p)//.withMinSuccessfulTests(1000)
   }
 
   class CuckooFilterCommands[T: Arbitrary](implicit canGenerateHash: CanGenerateHashFrom[T]) extends Commands {
@@ -56,7 +56,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
       type Result = Boolean
       def run(sut: Sut): Boolean = sut.synchronized(sut.mightContain(item))
       def nextState(state: State): State = state
-      def preCondition(state: State): Boolean = true
+      def preCondition(state: State): Boolean = state.addedItems < state.expectedItems
       def postCondition(state: State, result: Boolean): Prop = result
     }
 

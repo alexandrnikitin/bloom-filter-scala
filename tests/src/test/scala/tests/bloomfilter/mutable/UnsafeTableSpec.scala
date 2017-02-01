@@ -33,7 +33,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
       Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
-      new UnsafeTable8Bit(state.size, 8)
+      new UnsafeTable8Bit(state.size)
 
     def initialPreCondition(state: State): Boolean = true
 
@@ -91,7 +91,7 @@ class UnsafeTableV2Spec extends Properties("UnsafeTableV2Spec") {
       Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
-      new UnsafeTable8Bit(state.numberOfBuckets, 8)
+      new UnsafeTable8Bit(state.numberOfBuckets)
 
     def initialPreCondition(state: State): Boolean = true
 
@@ -148,7 +148,7 @@ class UnsafeTableV3Spec extends Properties("UnsafeTableV2Spec") {
       Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
-      new UnsafeTable8Bit(state.numberOfBuckets, 8)
+      new UnsafeTable8Bit(state.numberOfBuckets)
 
     def initialPreCondition(state: State): Boolean = true
 
