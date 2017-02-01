@@ -75,7 +75,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   }
 
   private def indexHash(hash: Long): Long = {
-    hash & (numberOfBuckets - 1) // TODO bit and
+    hash & (numberOfBuckets - 1)
   }
 
   private def tagHash(hash: Long): Long = {
