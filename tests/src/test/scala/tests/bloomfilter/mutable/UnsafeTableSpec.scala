@@ -39,7 +39,8 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
       for {
         index <- Gen.choose[Long](0, state.size)
         tag <- Gen.choose[Byte](Byte.MinValue, Byte.MaxValue)
-      } yield commandSequence(SetItem(index, tag), GetItem(index))
+      } yield commandSequence(SetItem(index, tag), GetItem(index, tag))
+
 
     case class SetItem(index: Long, tag: Long) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.insert(index, tag, kickout = false))
@@ -48,9 +49,9 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
       def postCondition(state: State, success: Boolean): Prop = success
     }
 
-    case class GetItem(i: Long) extends SuccessCommand {
+    case class GetItem(index: Long, tag: Long) extends SuccessCommand {
       type Result = Boolean
-      def run(sut: Sut): Boolean = true
+      def run(sut: Sut): Boolean = sut.synchronized(sut.find(index, 0, tag))
       def nextState(state: State): State = state
       def preCondition(state: State) = true
       def postCondition(state: State, result: Boolean): Prop = result
