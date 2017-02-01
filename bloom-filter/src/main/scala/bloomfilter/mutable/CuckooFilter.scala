@@ -41,7 +41,11 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   }
 
   def mightContain(x: T): Boolean = {
-    ???
+    val (index, tag) = generateIndexTagHash(x)
+    val index2 = altIndex(index, tag)
+    // TODO remove
+    assert(index == altIndex(index2, tag))
+    bits.find(index, index2, tag)
   }
 
   def dispose(): Unit = bits.dispose()
