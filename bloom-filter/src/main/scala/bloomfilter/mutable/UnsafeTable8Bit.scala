@@ -3,6 +3,19 @@ package bloomfilter.mutable
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeTable8Bit(val numberOfBuckets: Long) {
+
+  def remove(index: Long, tag: Long): Boolean = {
+    var tagIndex = 0
+    while (tagIndex < tagsPerBucket) {
+      if (readTag(index, tagIndex) == tag) {
+        writeTag(index, tagIndex, 0)
+        return true
+      }
+      tagIndex += 1
+    }
+    false
+  }
+
   private var random = 0
   private val tagsPerBucket = 4
   private val bytesPerBucket = (8 * tagsPerBucket + 7) >> 3

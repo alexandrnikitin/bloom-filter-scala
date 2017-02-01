@@ -53,7 +53,16 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   }
 
   def remove(x: T): Unit = {
-    ???
+    val (index, tag) = generateIndexTagHash(x)
+    if (bits.remove(index, tag)) {
+      numberOfItems -= 1
+      return
+    }
+    val index2 = altIndex(index, tag)
+    if(bits.remove(index2, tag)) {
+      numberOfItems -= 1
+      return
+    }
   }
 
   def mightContain(x: T): Boolean = {
@@ -67,6 +76,8 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
 
   def dispose(): Unit = bits.dispose()
 
+  // TODO tuple
+  //@inline
   private def generateIndexTagHash(x: T): (Long, Long) = {
     val hash = canGenerateHash.generateHash(x)
     val index = indexHash(hash >> 32)

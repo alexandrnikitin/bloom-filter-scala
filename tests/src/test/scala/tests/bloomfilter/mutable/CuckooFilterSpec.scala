@@ -43,11 +43,22 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
     def genCommand(state: State): Gen[Command] =
       for {
         item <- Arbitrary.arbitrary[T]
-      } yield commandSequence(AddItem(item), CheckItem(item))
+      } yield commandSequence(AddItem(item), CheckItem(item), RemoveItem(item))
 
     case class AddItem(item: T) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.add(item))
       def nextState(state: State): State = state.copy(addedItems = state.addedItems + 1)
+      def preCondition(state: State): Boolean = state.addedItems < state.expectedItems
+      def postCondition(state: State, success: Boolean): Prop = success
+    }
+
+    case class RemoveItem(item: T) extends SuccessCommand {
+      type Result = Boolean
+      def run(sut: Sut): Boolean = sut.synchronized{
+        sut.remove(item)
+        !sut.mightContain(item)
+      }
+      def nextState(state: State): State = state.copy(addedItems = state.addedItems - 1)
       def preCondition(state: State): Boolean = state.addedItems < state.expectedItems
       def postCondition(state: State, success: Boolean): Prop = success
     }
