@@ -30,6 +30,13 @@ object SandboxApp {
 
     val sut = CuckooFilter[Long](1000)
     sut.add(8)
+    assert(sut.mightContain(8))
+    sut.add(10)
+    assert(sut.mightContain(10))
+    sut.add(8)
+    assert(sut.mightContain(8))
+    sut.add(10000)
+    assert(sut.mightContain(10000))
 
   }
 
