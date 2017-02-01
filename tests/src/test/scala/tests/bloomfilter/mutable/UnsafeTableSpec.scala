@@ -16,19 +16,21 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
   class UnsafeTableCommands extends Commands {
     type Sut = UnsafeTable
 
-    case class State(size: Long)
+    case class State(size: Long, addedItems: Long)
 
     override def canCreateNewSut(
         newState: State,
         initSuts: Traversable[State],
         runningSuts: Traversable[Sut]): Boolean =
-      initSuts.isEmpty && runningSuts.isEmpty
+      initSuts.isEmpty && runningSuts.isEmpty ||
+          newState.addedItems >= newState.size ||
+          newState.addedItems > 100
 
     override def destroySut(sut: Sut): Unit =
       sut.dispose()
 
     override def genInitialState: Gen[State] =
-      Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State)
+      Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
       new UnsafeTable(state.size, 8)
@@ -44,7 +46,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
 
     case class SetItem(index: Long, tag: Long) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.insert(index, tag, kickout = false))
-      def nextState(state: State): State = state
+      def nextState(state: State): State =  state.copy(addedItems = state.addedItems + 1)
       def preCondition(state: State) = true
       def postCondition(state: State, success: Boolean): Prop = success
     }

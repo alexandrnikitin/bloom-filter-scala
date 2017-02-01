@@ -49,15 +49,15 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
 
     case class AddItem(item: T) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.add(item))
-      def nextState(state: State) = state.copy(addedItems = state.addedItems + 1)
+      def nextState(state: State): State = state.copy(addedItems = state.addedItems + 1)
       def preCondition(state: State) = true
-      def postCondition(state: State, success: Boolean) = success
+      def postCondition(state: State, success: Boolean): Prop = success
     }
 
     case class CheckItem(item: T) extends SuccessCommand {
       type Result = Boolean
       def run(sut: Sut): Boolean = sut.synchronized(sut.mightContain(item))
-      def nextState(state: State) = state
+      def nextState(state: State): State = state
       def preCondition(state: State) = true
       def postCondition(state: State, result: Boolean): Prop = result
     }
