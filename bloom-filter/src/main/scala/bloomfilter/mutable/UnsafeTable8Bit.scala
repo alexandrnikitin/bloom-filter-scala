@@ -3,10 +3,11 @@ package bloomfilter.mutable
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 import scala.util.Random
 
-class UnsafeTable(val numberOfBuckets: Long, numberOfBitsPerItem: Int) {
+class UnsafeTable8Bit(val numberOfBuckets: Long) {
+  private val random = new Random()
   private val tagsPerBucket = 4
-  private val bytesPerBucket = (numberOfBitsPerItem * tagsPerBucket + 7) >> 3
-  private val tagMask = (1L << numberOfBitsPerItem) - 1
+  private val bytesPerBucket = (8 * tagsPerBucket + 7) >> 3
+  private val tagMask = (1L << 8) - 1
   private val ptr = unsafe.allocateMemory(bytesPerBucket * numberOfBuckets)
   unsafe.setMemory(ptr, bytesPerBucket * numberOfBuckets, 0.toByte)
 
@@ -46,7 +47,7 @@ class UnsafeTable(val numberOfBuckets: Long, numberOfBitsPerItem: Int) {
       tagIndex += 1
     }
 
-    val r = Random.nextInt() % tagsPerBucket
+    val r = random.nextInt() % tagsPerBucket
     oldtagToRet = readTag(index, r)
     writeTag(index, r, tag)
 

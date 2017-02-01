@@ -1,6 +1,6 @@
 package tests.bloomfilter.mutable
 
-import bloomfilter.mutable.UnsafeTable
+import bloomfilter.mutable.UnsafeTable8Bit
 import org.scalacheck.Test.Parameters
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Gen, Prop, Properties}
@@ -14,7 +14,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
   }
 
   class UnsafeTableCommands extends Commands {
-    type Sut = UnsafeTable
+    type Sut = UnsafeTable8Bit
 
     case class State(size: Long, addedItems: Long)
 
@@ -33,7 +33,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") {
       Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
-      new UnsafeTable(state.size, 8)
+      new UnsafeTable8Bit(state.size, 8)
 
     def initialPreCondition(state: State): Boolean = true
 
@@ -72,7 +72,7 @@ class UnsafeTableV2Spec extends Properties("UnsafeTableV2Spec") {
   }
 
   class UnsafeTableCommands extends Commands {
-    type Sut = UnsafeTable
+    type Sut = UnsafeTable8Bit
 
     case class State(numberOfBuckets: Long, addedItems: Long)
 
@@ -91,7 +91,7 @@ class UnsafeTableV2Spec extends Properties("UnsafeTableV2Spec") {
       Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
-      new UnsafeTable(state.numberOfBuckets, 8)
+      new UnsafeTable8Bit(state.numberOfBuckets, 8)
 
     def initialPreCondition(state: State): Boolean = true
 
@@ -131,7 +131,7 @@ class UnsafeTableV3Spec extends Properties("UnsafeTableV2Spec") {
   }
 
   class UnsafeTableCommands extends Commands {
-    type Sut = UnsafeTable
+    type Sut = UnsafeTable8Bit
 
     case class State(numberOfBuckets: Long, addedItems: Long)
 
@@ -148,7 +148,7 @@ class UnsafeTableV3Spec extends Properties("UnsafeTableV2Spec") {
       Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
-      new UnsafeTable(state.numberOfBuckets, 8)
+      new UnsafeTable8Bit(state.numberOfBuckets, 8)
 
     def initialPreCondition(state: State): Boolean = true
 

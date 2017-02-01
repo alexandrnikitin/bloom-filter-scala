@@ -1,6 +1,6 @@
 import java.text.NumberFormat
 
-import bloomfilter.mutable.CuckooFilter
+import bloomfilter.mutable.{CuckooFilter, UnsafeTable8Bit}
 import com.google.monitoring.runtime.instrumentation.{AllocationRecorder, Sampler}
 import com.twitter.algebird.{BloomFilter => AlgebirdBloomFilter}
 

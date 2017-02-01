@@ -1,6 +1,8 @@
 package bloomfilter.mutable
 
-import org.openjdk.jmh.annotations.{BenchmarkMode, OperationsPerInvocation, _}
+import java.util.concurrent.TimeUnit
+
+import org.openjdk.jmh.annotations.{BenchmarkMode, OperationsPerInvocation, OutputTimeUnit, _}
 
 import scala.util.Random
 
@@ -10,25 +12,27 @@ class StringItemCuckooBenchmark {
   private val itemsExpected = 100000000L
   private val random = new Random()
 
-  private val bf = CuckooFilter[String](itemsExpected)
+  private var bf: CuckooFilter[String] = _
 
   @Param(Array("1024"))
   var length: Int = _
 
-  private val item = random.nextString(length)
-  bf.add(item)
-
-  private val items = new Array[String](1000)
-
+  private val items = new Array[String](10000)
   var i = 0
   while (i < items.length) {
     items(i) = random.nextString(length)
     i += 1
   }
 
+  @Setup(Level.Iteration)
+  def setup(): Unit = {
+    bf = CuckooFilter[String](itemsExpected)
+  }
+
   @Benchmark
   @BenchmarkMode(Array(Mode.SingleShotTime))
-  @OperationsPerInvocation(1000)
+  @OutputTimeUnit(TimeUnit.NANOSECONDS)
+  @OperationsPerInvocation(10000)
   def myPut(): Unit = {
     var i = 0
     while (i < items.length) {
@@ -39,7 +43,8 @@ class StringItemCuckooBenchmark {
 
   @Benchmark
   @BenchmarkMode(Array(Mode.SingleShotTime))
-  @OperationsPerInvocation(1000)
+  @OutputTimeUnit(TimeUnit.NANOSECONDS)
+  @OperationsPerInvocation(10000)
   def myGet(): Unit = {
     var i = 0
     while (i < items.length) {
