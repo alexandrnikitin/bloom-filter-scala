@@ -26,9 +26,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
         newState: State,
         initSuts: Traversable[State],
         runningSuts: Traversable[Sut]): Boolean = {
-      initSuts.isEmpty && runningSuts.isEmpty ||
-          newState.addedItems > newState.expectedItems ||
-          newState.addedItems > 100
+      initSuts.isEmpty && runningSuts.isEmpty
     }
 
     override def destroySut(sut: Sut): Unit =
@@ -50,7 +48,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
     case class AddItem(item: T) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.add(item))
       def nextState(state: State): State = state.copy(addedItems = state.addedItems + 1)
-      def preCondition(state: State) = true
+      def preCondition(state: State): Boolean = state.addedItems < state.expectedItems
       def postCondition(state: State, success: Boolean): Prop = success
     }
 
@@ -58,7 +56,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
       type Result = Boolean
       def run(sut: Sut): Boolean = sut.synchronized(sut.mightContain(item))
       def nextState(state: State): State = state
-      def preCondition(state: State) = true
+      def preCondition(state: State): Boolean = true
       def postCondition(state: State, result: Boolean): Prop = result
     }
 

@@ -2,6 +2,8 @@ package bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 
+import scala.util.Random
+
 class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val bits: UnsafeTable)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
@@ -20,17 +22,31 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     var curindex = index
     var curtag = tag
 
+    if (bits.insert(curindex, curtag)) {
+      numberOfItems += 1
+      return
+    }
+
+    curindex = altIndex(curindex, curtag)
+    if (bits.insert(curindex, curtag)) {
+      numberOfItems += 1
+      return
+    }
+
+    // TODO sort out
+    val r = Random.nextInt() % 4
+    var oldtag2 = bits.readTag(curindex, r)
+    bits.writeTag(curindex, r, curtag)
+    curtag = oldtag2
+
     var i = 0
     while (i < MaxAttempts) {
-      val kickout = i > 0
       val (success, oldtag) = bits.insertWithReplace(curindex, curtag)
       if (success) {
         numberOfItems += 1
         return
       }
-      if (kickout) {
-        curtag = oldtag
-      }
+      curtag = oldtag
       curindex = altIndex(curindex, curtag)
       i += 1
     }
@@ -42,10 +58,11 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
 
   def mightContain(x: T): Boolean = {
     val (index, tag) = generateIndexTagHash(x)
+    if (bits.find(index, tag)) return true
     val index2 = altIndex(index, tag)
-    // TODO remove
+    if (bits.find(index2, tag)) return true
     assert(index == altIndex(index2, tag))
-    bits.findBoth(index, index2, tag)
+    false
   }
 
   def dispose(): Unit = bits.dispose()
