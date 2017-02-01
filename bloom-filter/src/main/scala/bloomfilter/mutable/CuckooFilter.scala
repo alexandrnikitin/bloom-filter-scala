@@ -2,16 +2,14 @@ package bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 
-import scala.util.Random
-
 class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val bits: UnsafeTable8Bit)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   var numberOfItems = 0L
-  val random = new Random()
+  var random = 0
 
   def this(numberOfBuckets: Long, numberOfBitsPerItem: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
-    this(numberOfBuckets, numberOfBitsPerItem, new UnsafeTable8Bit(numberOfBuckets, numberOfBitsPerItem))
+    this(numberOfBuckets, numberOfBitsPerItem, new UnsafeTable8Bit(numberOfBuckets))
   }
 
   import CuckooFilter._
@@ -35,7 +33,8 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     }
 
     // TODO sort out
-    val r = random.nextInt() % 4
+    random += 1
+    val r = random % 4
     var oldtag2 = bits.readTag(curindex, r)
     bits.writeTag(curindex, r, curtag)
     curtag = oldtag2

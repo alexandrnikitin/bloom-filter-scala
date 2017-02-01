@@ -1,10 +1,9 @@
 package bloomfilter.mutable
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
-import scala.util.Random
 
 class UnsafeTable8Bit(val numberOfBuckets: Long) {
-  private val random = new Random()
+  private var random = 0
   private val tagsPerBucket = 4
   private val bytesPerBucket = (8 * tagsPerBucket + 7) >> 3
   private val tagMask = (1L << 8) - 1
@@ -47,7 +46,8 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
       tagIndex += 1
     }
 
-    val r = random.nextInt() % tagsPerBucket
+    random += 1
+    val r =  random % tagsPerBucket
     oldtagToRet = readTag(index, r)
     writeTag(index, r, tag)
 
