@@ -5,8 +5,6 @@ import bloomfilter.CanGenerateHashFrom
 class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val bits: UnsafeTable)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
-  var numberOfItems = 0L
-
   def this(numberOfBuckets: Long, numberOfBitsPerItem: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
     this(numberOfBuckets, numberOfBitsPerItem, new UnsafeTable16Bit(numberOfBuckets))
   }
@@ -16,7 +14,6 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   def add(x: T): Unit = {
     val (index, tag) = generateIndexTagHash(x)
     if (bits.insert(index, tag)) {
-      numberOfItems += 1
       return
     }
 
@@ -28,7 +25,6 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
       curindex = altIndex(curindex, curtag, numberOfBuckets)
       val swappedTag = bits.swapAny(curindex, curtag)
       if (swappedTag == 0) {
-        numberOfItems += 1
         return
       }
       curtag = swappedTag
@@ -39,12 +35,10 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   def remove(x: T): Unit = {
     val (index, tag) = generateIndexTagHash(x)
     if (bits.remove(index, tag)) {
-      numberOfItems -= 1
       return
     }
     val index2 = altIndex(index, tag, numberOfBuckets)
     if(bits.remove(index2, tag)) {
-      numberOfItems -= 1
       return
     }
   }
