@@ -14,10 +14,6 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 
   import UnsafeTable8Bit._
 
-  private var random = 0
-  private val tagsPerBucket = 4
-  private val bytesPerBucket = (BitsPerItem * tagsPerBucket + 7) >> 3
-  private val tagMask = (1L << BitsPerItem) - 1
   private val ptr = unsafe.allocateMemory(bytesPerBucket * numberOfBuckets)
   unsafe.setMemory(ptr, bytesPerBucket * numberOfBuckets, 0.toByte)
 
@@ -35,7 +31,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 
   def insert(index: Long, tag: Long): Boolean = {
     var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
+    while (tagIndex < TagsPerBucket) {
       if (readTag(index, tagIndex) == EmptyTag) {
         writeTag(index, tagIndex, tag)
         return true
@@ -48,7 +44,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 
   def swapAny(index: Long, tag: Long): Long = {
     var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
+    while (tagIndex < TagsPerBucket) {
       if (readTag(index, tagIndex) == EmptyTag) {
         writeTag(index, tagIndex, tag)
         return EmptyTag
@@ -57,7 +53,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
     }
 
     random += 1
-    val r = random & (tagsPerBucket - 1)
+    val r = random & (TagsPerBucket - 1)
     val tagToSwap = readTag(index, r)
     writeTag(index, r, tag)
     tagToSwap
@@ -65,7 +61,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 
   def remove(index: Long, tag: Long): Boolean = {
     var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
+    while (tagIndex < TagsPerBucket) {
       if (readTag(index, tagIndex) == tag) {
         writeTag(index, tagIndex, EmptyTag)
         return true
@@ -77,7 +73,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 
   def find(index: Long, tag: Long): Boolean = {
     var i = 0
-    while (i < tagsPerBucket) {
+    while (i < TagsPerBucket) {
       val tag1 = readTag(index, i)
       if (tag1 == tag) {
         return true
@@ -93,6 +89,10 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 object UnsafeTable8Bit {
   val EmptyTag = 0
   val BitsPerItem = 8
+  val TagsPerBucket = 4
+  private var random = 0
+  private val bytesPerBucket = (BitsPerItem * TagsPerBucket + 7) >> 3
+  private val tagMask = (1L << BitsPerItem) - 1
 }
 
 
@@ -100,10 +100,6 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 
   import UnsafeTable16Bit._
 
-  private var random = 0
-  private val tagsPerBucket = 4
-  private val bytesPerBucket = (BitsPerItem * tagsPerBucket + 7) >> 3
-  private val tagMask = (1L << BitsPerItem) - 1
   private val ptr = unsafe.allocateMemory(bytesPerBucket * numberOfBuckets)
   unsafe.setMemory(ptr, bytesPerBucket * numberOfBuckets, 0.toByte)
 
@@ -120,7 +116,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 
   def insert(index: Long, tag: Long): Boolean = {
     var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
+    while (tagIndex < TagsPerBucket) {
       if (readTag(index, tagIndex) == EmptyTag) {
         writeTag(index, tagIndex, tag)
         return true
@@ -133,7 +129,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 
   def swapAny(index: Long, tag: Long): Long = {
     var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
+    while (tagIndex < TagsPerBucket) {
       if (readTag(index, tagIndex) == EmptyTag) {
         writeTag(index, tagIndex, tag)
         return EmptyTag
@@ -142,7 +138,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
     }
 
     random += 1
-    val r = random & (tagsPerBucket - 1)
+    val r = random & (TagsPerBucket - 1)
     val tagToSwap = readTag(index, r)
     writeTag(index, r, tag)
     tagToSwap
@@ -150,7 +146,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 
   def remove(index: Long, tag: Long): Boolean = {
     var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
+    while (tagIndex < TagsPerBucket) {
       if (readTag(index, tagIndex) == tag) {
         writeTag(index, tagIndex, EmptyTag)
         return true
@@ -162,7 +158,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 
   def find(index: Long, tag: Long): Boolean = {
     var i = 0
-    while (i < tagsPerBucket) {
+    while (i < TagsPerBucket) {
       val tag1 = readTag(index, i)
       if (tag1 == tag) {
         return true
@@ -179,4 +175,9 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 object UnsafeTable16Bit {
   val EmptyTag = 0
   val BitsPerItem = 16
+  val TagsPerBucket = 4
+  private var random = 0
+  private val bytesPerBucket = (BitsPerItem * TagsPerBucket + 7) >> 3
+  private val tagMask = (1L << BitsPerItem) - 1
+
 }
