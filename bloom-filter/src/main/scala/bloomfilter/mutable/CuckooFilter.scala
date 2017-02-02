@@ -6,7 +6,6 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   var numberOfItems = 0L
-  var random = 0
 
   def this(numberOfBuckets: Long, numberOfBitsPerItem: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
     this(numberOfBuckets, numberOfBitsPerItem, new UnsafeTable8Bit(numberOfBuckets))
@@ -14,40 +13,25 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
 
   import CuckooFilter._
 
-  private def altIndex(index: Long, tag: Long): Long = indexHash((index ^ (tag * 0x5bd1e995)).toInt)
-
   def add(x: T): Unit = {
     val (index, tag) = generateIndexTagHash(x)
+    if (bits.insert(index, tag)) {
+      numberOfItems += 1
+      return
+    }
+
     var curindex = index
     var curtag = tag
 
-    if (bits.insert(curindex, curtag)) {
-      numberOfItems += 1
-      return
-    }
-
-    curindex = altIndex(curindex, curtag)
-    if (bits.insert(curindex, curtag)) {
-      numberOfItems += 1
-      return
-    }
-
-    // TODO sort out
-    random += 1
-    val r = random & (4 - 1)
-    var oldtag2 = bits.readTag(curindex, r)
-    bits.writeTag(curindex, r, curtag)
-    curtag = oldtag2
-
     var i = 0
-    while (i < MaxAttempts) {
-      val (success, oldtag) = bits.insertWithReplace(curindex, curtag)
-      if (success) {
+    while (i < MaxAddAttempts) {
+      curindex = altIndex(curindex, curtag, numberOfBuckets)
+      val swappedTag = bits.swapAny(curindex, curtag)
+      if (swappedTag == 0) {
         numberOfItems += 1
         return
       }
-      curtag = oldtag
-      curindex = altIndex(curindex, curtag)
+      curtag = swappedTag
       i += 1
     }
   }
@@ -58,7 +42,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
       numberOfItems -= 1
       return
     }
-    val index2 = altIndex(index, tag)
+    val index2 = altIndex(index, tag, numberOfBuckets)
     if(bits.remove(index2, tag)) {
       numberOfItems -= 1
       return
@@ -68,9 +52,9 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   def mightContain(x: T): Boolean = {
     val (index, tag) = generateIndexTagHash(x)
     if (bits.find(index, tag)) return true
-    val index2 = altIndex(index, tag)
+    val index2 = altIndex(index, tag, numberOfBuckets)
     if (bits.find(index2, tag)) return true
-    assert(index == altIndex(index2, tag))
+    assert(index == altIndex(index2, tag, numberOfBuckets))
     false
   }
 
@@ -80,20 +64,11 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   //@inline
   private def generateIndexTagHash(x: T): (Long, Long) = {
     val hash = canGenerateHash.generateHash(x)
-    val index = indexHash(hash >> 32)
-    val tag = tagHash(hash)
+    val index = indexHash(hash >> 32, numberOfBuckets)
+    val tag = tagHash(hash, numberOfBitsPerItem)
     (index, tag)
   }
 
-  private def indexHash(hash: Long): Long = {
-    hash & (numberOfBuckets - 1)
-  }
-
-  private def tagHash(hash: Long): Long = {
-    var tag = hash & ((1L << numberOfBitsPerItem) - 1)
-    if (tag == 0) tag += 1
-    tag
-  }
 
 }
 
@@ -116,7 +91,7 @@ object CuckooFilter {
   }
 
 
-  val MaxAttempts = 500
+  val MaxAddAttempts = 500
 
   private def upperPowerOf2(l: Long): Long = {
     var x = l - 1
@@ -129,5 +104,18 @@ object CuckooFilter {
     x += 1
     x
   }
+
+  private def altIndex(index: Long, tag: Long, numberOfBuckets: Long): Long = indexHash((index ^ (tag * 0x5bd1e995)).toInt, numberOfBuckets)
+
+  private def indexHash(hash: Long, numberOfBuckets: Long): Long = {
+    hash & (numberOfBuckets - 1)
+  }
+
+  private def tagHash(hash: Long, numberOfBitsPerItem: Long): Long = {
+    var tag = hash & ((1L << numberOfBitsPerItem) - 1)
+    if (tag == 0) tag += 1
+    tag
+  }
+
 
 }

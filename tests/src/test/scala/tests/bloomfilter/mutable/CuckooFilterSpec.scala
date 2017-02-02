@@ -33,7 +33,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
       sut.dispose()
 
     override def genInitialState: Gen[State] =
-      Gen.chooseNum[Long](1, Int.MaxValue).map(State(_, 0))
+      Gen.chooseNum[Long](1, 100000).map(State(_, 0))
 
     override def newSut(state: State): Sut =
       CuckooFilter[T](state.expectedItems)

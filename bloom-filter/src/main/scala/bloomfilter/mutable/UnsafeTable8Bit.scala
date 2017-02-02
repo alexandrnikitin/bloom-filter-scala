@@ -4,17 +4,7 @@ import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeTable8Bit(val numberOfBuckets: Long) {
 
-  def remove(index: Long, tag: Long): Boolean = {
-    var tagIndex = 0
-    while (tagIndex < tagsPerBucket) {
-      if (readTag(index, tagIndex) == tag) {
-        writeTag(index, tagIndex, 0)
-        return true
-      }
-      tagIndex += 1
-    }
-    false
-  }
+  import UnsafeTable8Bit._
 
   private var random = 0
   private val tagsPerBucket = 4
@@ -38,7 +28,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
   def insert(index: Long, tag: Long): Boolean = {
     var tagIndex = 0
     while (tagIndex < tagsPerBucket) {
-      if (readTag(index, tagIndex) == 0) {
+      if (readTag(index, tagIndex) == EmptyTag) {
         writeTag(index, tagIndex, tag)
         return true
       }
@@ -48,23 +38,33 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
     false
   }
 
-  def insertWithReplace(index: Long, tag: Long): (Boolean, Long) = {
-    var oldtagToRet = 0L
+  def swapAny(index: Long, tag: Long): Long = {
     var tagIndex = 0
     while (tagIndex < tagsPerBucket) {
-      if (readTag(index, tagIndex) == 0) {
+      if (readTag(index, tagIndex) == EmptyTag) {
         writeTag(index, tagIndex, tag)
-        return (true, 0)
+        return EmptyTag
       }
       tagIndex += 1
     }
 
     random += 1
     val r =  random & (tagsPerBucket - 1)
-    oldtagToRet = readTag(index, r)
+    val tagToSwap = readTag(index, r)
     writeTag(index, r, tag)
+    tagToSwap
+  }
 
-    (false, oldtagToRet)
+  def remove(index: Long, tag: Long): Boolean = {
+    var tagIndex = 0
+    while (tagIndex < tagsPerBucket) {
+      if (readTag(index, tagIndex) == tag) {
+        writeTag(index, tagIndex, EmptyTag)
+        return true
+      }
+      tagIndex += 1
+    }
+    false
   }
 
   private def haszero4(x: Long) = (((x)-0x1111L) & (~(x)) & 0x8888L) > 0
@@ -91,25 +91,9 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
     false
   }
 
-  def findBoth(index: Long, index2: Long, tag: Long): Boolean = {
-    val p1 = ptr + index * bytesPerBucket
-    val p2 = ptr + index2 * bytesPerBucket
-    val v1 = unsafe.getLong(p1)
-    val v2 = unsafe.getLong(p2)
-
-    var i = 0
-    while (i < tagsPerBucket) {
-      val tag1 = readTag(index, i)
-      val tag2 = readTag(index2, i)
-      if ((tag1 == tag) || (tag2 == tag)) {
-        return true
-      }
-      i += 1
-    }
-    false
-  }
-
-
-
   def dispose(): Unit = unsafe.freeMemory(ptr)
+}
+
+object UnsafeTable8Bit {
+  val EmptyTag = 0
 }
