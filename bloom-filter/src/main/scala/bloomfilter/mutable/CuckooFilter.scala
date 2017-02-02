@@ -12,7 +12,9 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   import CuckooFilter._
 
   def add(x: T): Unit = {
-    val (index, tag) = generateIndexTagHash(x)
+    val hash = canGenerateHash.generateHash(x)
+    val index = indexHash(hash >> 32, numberOfBuckets)
+    val tag = tagHash(hash, numberOfBitsPerItem)
     if (bits.insert(index, tag)) {
       return
     }
@@ -33,7 +35,9 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   }
 
   def remove(x: T): Unit = {
-    val (index, tag) = generateIndexTagHash(x)
+    val hash = canGenerateHash.generateHash(x)
+    val index = indexHash(hash >> 32, numberOfBuckets)
+    val tag = tagHash(hash, numberOfBitsPerItem)
     if (bits.remove(index, tag)) {
       return
     }
@@ -44,7 +48,9 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   }
 
   def mightContain(x: T): Boolean = {
-    val (index, tag) = generateIndexTagHash(x)
+    val hash = canGenerateHash.generateHash(x)
+    val index = indexHash(hash >> 32, numberOfBuckets)
+    val tag = tagHash(hash, numberOfBitsPerItem)
     if (bits.find(index, tag)) return true
     val index2 = altIndex(index, tag, numberOfBuckets)
     if (bits.find(index2, tag)) return true
@@ -53,17 +59,6 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
   }
 
   def dispose(): Unit = bits.dispose()
-
-  // TODO tuple
-  //@inline
-  private def generateIndexTagHash(x: T): (Long, Long) = {
-    val hash = canGenerateHash.generateHash(x)
-    val index = indexHash(hash >> 32, numberOfBuckets)
-    val tag = tagHash(hash, numberOfBitsPerItem)
-    (index, tag)
-  }
-
-
 }
 
 object CuckooFilter {
@@ -87,6 +82,7 @@ object CuckooFilter {
 
   val MaxAddAttempts = 500
 
+  @inline
   private def upperPowerOf2(l: Long): Long = {
     var x = l - 1
     x |= x >> 1
@@ -99,12 +95,16 @@ object CuckooFilter {
     x
   }
 
-  private def altIndex(index: Long, tag: Long, numberOfBuckets: Long): Long = indexHash((index ^ (tag * 0x5bd1e995)).toInt, numberOfBuckets)
+  @inline
+  private def altIndex(index: Long, tag: Long, numberOfBuckets: Long): Long =
+    indexHash((index ^ (tag * 0x5bd1e995)).toInt, numberOfBuckets)
 
+  @inline
   private def indexHash(hash: Long, numberOfBuckets: Long): Long = {
     hash & (numberOfBuckets - 1)
   }
 
+  @inline
   private def tagHash(hash: Long, numberOfBitsPerItem: Long): Long = {
     var tag = hash & ((1L << numberOfBitsPerItem) - 1)
     if (tag == 0) tag += 1
