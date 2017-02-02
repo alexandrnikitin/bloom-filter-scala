@@ -19,17 +19,16 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
       return
     }
 
-    var curindex = index
-    var curtag = tag
-
+    var curIndex = index
+    var curTag = tag
     var i = 0
     while (i < MaxAddAttempts) {
-      curindex = altIndex(curindex, curtag, numberOfBuckets)
-      val swappedTag = bits.swapAny(curindex, curtag)
+      curIndex = altIndex(curIndex, curTag, numberOfBuckets)
+      val swappedTag = bits.swapAny(curIndex, curTag)
       if (swappedTag == 0) {
         return
       }
-      curtag = swappedTag
+      curTag = swappedTag
       i += 1
     }
   }
@@ -38,13 +37,9 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     val hash = canGenerateHash.generateHash(x)
     val index = indexHash(hash >> 32, numberOfBuckets)
     val tag = tagHash(hash, numberOfBitsPerItem)
-    if (bits.remove(index, tag)) {
-      return
-    }
+    if (bits.remove(index, tag)) return
     val index2 = altIndex(index, tag, numberOfBuckets)
-    if(bits.remove(index2, tag)) {
-      return
-    }
+    if (bits.remove(index2, tag)) return
   }
 
   def mightContain(x: T): Boolean = {
@@ -54,7 +49,6 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     if (bits.find(index, tag)) return true
     val index2 = altIndex(index, tag, numberOfBuckets)
     if (bits.find(index2, tag)) return true
-    assert(index == altIndex(index2, tag, numberOfBuckets))
     false
   }
 
