@@ -2,13 +2,13 @@ package bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 
-class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val bits: UnsafeTable8Bit)
+class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val bits: UnsafeTable)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   var numberOfItems = 0L
 
   def this(numberOfBuckets: Long, numberOfBitsPerItem: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
-    this(numberOfBuckets, numberOfBitsPerItem, new UnsafeTable8Bit(numberOfBuckets))
+    this(numberOfBuckets, numberOfBitsPerItem, new UnsafeTable16Bit(numberOfBuckets))
   }
 
   import CuckooFilter._
@@ -77,7 +77,7 @@ object CuckooFilter {
   // TODO falsePositiveRate?
   def apply[T](numberOfItems: Long)(implicit canGenerateHash: CanGenerateHashFrom[T]): CuckooFilter[T] = {
     val nb = optimalNumberOfBuckets(numberOfItems)
-    new CuckooFilter[T](nb, 8)
+    new CuckooFilter[T](nb, 16)
   }
 
   def optimalNumberOfBuckets(numberOfItems: Long): Long = {

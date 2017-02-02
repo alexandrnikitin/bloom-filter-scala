@@ -2,9 +2,17 @@ package bloomfilter.mutable
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
-class UnsafeTable8Bit(val numberOfBuckets: Long) {
+trait UnsafeTable {
+  def insert(index: Long, tag: Long): Boolean
+  def swapAny(index: Long, tag: Long): Long
+  def remove(index: Long, tag: Long): Boolean
+  def find(index: Long, tag: Long): Boolean
+  def dispose(): Unit
+}
 
-  import UnsafeTable8Bit._
+class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
+
+  import UnsafeTable16Bit._
 
   private var random = 0
   private val tagsPerBucket = 4
@@ -14,15 +22,14 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
   unsafe.setMemory(ptr, bytesPerBucket * numberOfBuckets, 0.toByte)
 
   def readTag(bucketIndex: Long, tagIndex: Int): Long = {
-    val p = ptr + bucketIndex * bytesPerBucket + tagIndex
-    val tag = unsafe.getByte(p)
+    val p = ptr + bucketIndex * bytesPerBucket + (tagIndex >> 1)
+    val tag = unsafe.getShort(p)
     tag & tagMask
   }
 
-  def writeTag(i: Long, j: Int, t: Long): Unit = {
-    val p = ptr + i * bytesPerBucket
-    val tag = t & tagMask
-    unsafe.putByte(p + j, tag.toByte)
+  def writeTag(bucketIndex: Long, tagIndex: Int, tag: Long): Unit = {
+    val p = ptr + bucketIndex * bytesPerBucket + (tagIndex >> 1)
+    unsafe.putShort(p , (tag & tagMask).toShort)
   }
 
   def insert(index: Long, tag: Long): Boolean = {
@@ -82,7 +89,8 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
   def dispose(): Unit = unsafe.freeMemory(ptr)
 }
 
-object UnsafeTable8Bit {
+
+object UnsafeTable16Bit {
   val EmptyTag = 0
-  val BitsPerItem = 8
+  val BitsPerItem = 16
 }
