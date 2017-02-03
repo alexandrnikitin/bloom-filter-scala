@@ -2,7 +2,7 @@ logLevel := Level.Warn
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.0-RC2")
 
-addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.2.7")
+addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.2.21")
 
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "1.1")
 
