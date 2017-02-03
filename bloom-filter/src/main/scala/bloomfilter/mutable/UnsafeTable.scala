@@ -2,6 +2,7 @@ package bloomfilter.mutable
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
+// TODO macro for various bits?
 trait UnsafeTable {
   def insert(index: Long, tag: Long): Boolean
   def swapAny(index: Long, tag: Long): Long
