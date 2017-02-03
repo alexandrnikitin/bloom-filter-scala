@@ -14,7 +14,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
 
 
   override def overrideParameters(p: Parameters): Parameters = {
-    super.overrideParameters(p)//.withMinSuccessfulTests(1000)
+    super.overrideParameters(p).withMinSuccessfulTests(1000)
   }
 
   class CuckooFilterCommands[T: Arbitrary](implicit canGenerateHash: CanGenerateHashFrom[T]) extends Commands {
