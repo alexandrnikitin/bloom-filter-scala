@@ -1,3 +1,7 @@
+### 0.8.0
+
+- \#19 Cuckoo Filter (via \#20)
+
 ### 0.7.0
 
 - \#5 Add serialization support.
