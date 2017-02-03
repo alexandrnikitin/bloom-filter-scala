@@ -2,7 +2,7 @@ package bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 
-class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val bits: UnsafeTable)
+class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private val table: UnsafeTable)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) {
 
   def this(numberOfBuckets: Long, numberOfBitsPerItem: Int)(implicit canGenerateHash: CanGenerateHashFrom[T]) {
@@ -15,7 +15,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     val hash = canGenerateHash.generateHash(x)
     val index = indexHash(hash >> 32, numberOfBuckets)
     val tag = tagHash(hash, numberOfBitsPerItem)
-    if (bits.insert(index, tag)) {
+    if (table.insert(index, tag)) {
       return
     }
 
@@ -24,7 +24,7 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     var i = 0
     while (i < MaxAddAttempts) {
       curIndex = altIndex(curIndex, curTag, numberOfBuckets)
-      val swappedTag = bits.swapAny(curIndex, curTag)
+      val swappedTag = table.swapAny(curIndex, curTag)
       if (swappedTag == 0) {
         return
       }
@@ -37,22 +37,22 @@ class CuckooFilter[T](numberOfBuckets: Long, numberOfBitsPerItem: Int, private v
     val hash = canGenerateHash.generateHash(x)
     val index = indexHash(hash >> 32, numberOfBuckets)
     val tag = tagHash(hash, numberOfBitsPerItem)
-    if (bits.remove(index, tag)) return
+    if (table.remove(index, tag)) return
     val index2 = altIndex(index, tag, numberOfBuckets)
-    if (bits.remove(index2, tag)) return
+    if (table.remove(index2, tag)) return
   }
 
   def mightContain(x: T): Boolean = {
     val hash = canGenerateHash.generateHash(x)
     val index = indexHash(hash >> 32, numberOfBuckets)
     val tag = tagHash(hash, numberOfBitsPerItem)
-    if (bits.find(index, tag)) return true
+    if (table.find(index, tag)) return true
     val index2 = altIndex(index, tag, numberOfBuckets)
-    if (bits.find(index2, tag)) return true
+    if (table.find(index2, tag)) return true
     false
   }
 
-  def dispose(): Unit = bits.dispose()
+  def dispose(): Unit = table.dispose()
 }
 
 object CuckooFilter {
