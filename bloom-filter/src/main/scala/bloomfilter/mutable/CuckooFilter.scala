@@ -88,7 +88,7 @@ object CuckooFilter {
 
   @inline
   private def altIndex(index: Long, tag: Long, numberOfBuckets: Long): Long =
-    indexHash((index ^ (tag * 0x5bd1e995)).toInt, numberOfBuckets)
+    indexHash(index ^ (tag * 0x5bd1e995), numberOfBuckets)
 
   @inline
   private def indexHash(hash: Long, numberOfBuckets: Long): Long = {
@@ -96,7 +96,7 @@ object CuckooFilter {
   }
 
   @inline
-  private def tagHash(hash: Long, numberOfBitsPerItem: Long): Long = {
+  private def tagHash(hash: Long, numberOfBitsPerItem: Int): Long = {
     var tag = hash & ((1L << numberOfBitsPerItem) - 1)
     if (tag == 0) tag += 1
     tag

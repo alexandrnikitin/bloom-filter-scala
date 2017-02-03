@@ -88,7 +88,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
 }
 
 object UnsafeTable8Bit {
-  val EmptyTag = 0
+  val EmptyTag = 0L
   val BitsPerItem = 8
   val TagsPerBucket = 4
   private var random = 0
@@ -174,7 +174,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
 
 
 object UnsafeTable16Bit {
-  val EmptyTag = 0
+  val EmptyTag = 0L
   val BitsPerItem = 16
   val TagsPerBucket = 4
   private var random = 0
