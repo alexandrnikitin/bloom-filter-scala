@@ -37,12 +37,12 @@ class UnsafeBitArraySpec extends Properties("UnsafeBitArray") {
 
     def genCommand(state: State): Gen[Command] =
       for {
-        i <- Gen.choose[Long](0, state.size)
+        i <- Gen.choose[Long](0, state.size - 1)
       } yield commandSequence(SetItem(i), GetItem(i))
 
     case class SetItem(i: Long) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.set(i))
-      def nextState(state: State) = state
+      def nextState(state: State): State = state
       def preCondition(state: State) = true
       def postCondition(state: State, success: Boolean) = success
     }
@@ -50,7 +50,7 @@ class UnsafeBitArraySpec extends Properties("UnsafeBitArray") {
     case class GetItem(i: Long) extends SuccessCommand {
       type Result = Boolean
       def run(sut: Sut): Boolean = sut.synchronized(sut.get(i))
-      def nextState(state: State) = state
+      def nextState(state: State): State = state
       def preCondition(state: State) = true
       def postCondition(state: State, result: Boolean): Prop = result
     }
