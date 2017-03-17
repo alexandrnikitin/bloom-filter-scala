@@ -1,11 +1,14 @@
 package bloomfilter.mutable
 
-import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
+import java.io._
+
 
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
-class UnsafeBitArray(val numberOfBits: Long) {
+@SerialVersionUID(1L)
+class UnsafeBitArray(val numberOfBits: Long) extends Serializable{
   private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
+  @transient
   private val ptr = unsafe.allocateMemory(8L * indices)
   unsafe.setMemory(ptr, 8L * indices, 0.toByte)
 
@@ -66,5 +69,29 @@ class UnsafeBitArray(val numberOfBits: Long) {
     }
   }
 
+  @throws(classOf[java.io.ObjectStreamException])
+  /*private*/ def writeReplace : AnyRef = new UnsafeBitArray.SerializedForm(this)
+
+//  private def
+
   def dispose(): Unit = unsafe.freeMemory(ptr)
+}
+
+object UnsafeBitArray{
+  @SerialVersionUID(1l)
+  private class SerializedForm( @transient var unsafeBitArray: UnsafeBitArray ) extends Serializable{
+    private def writeObject( oos : ObjectOutputStream ): Unit = {
+      oos.defaultWriteObject()
+      oos.writeLong(unsafeBitArray.numberOfBits)
+      unsafeBitArray.writeTo(oos)
+    }
+    private def readObject( ois : ObjectInputStream ): Unit = {
+      ois.defaultReadObject()
+      val numberOfBits = ois.readLong()
+      unsafeBitArray = new UnsafeBitArray(numberOfBits)
+      unsafeBitArray.readFrom(ois)
+    }
+    @throws(classOf[java.io.ObjectStreamException])
+    /*private*/ def readResolve : AnyRef = unsafeBitArray
+  }
 }
