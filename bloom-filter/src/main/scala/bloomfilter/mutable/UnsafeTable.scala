@@ -1,6 +1,9 @@
 package bloomfilter.mutable
 
+import java.io.{DataInputStream, DataOutputStream, ObjectInputStream, ObjectOutputStream}
+
 import scala.concurrent.util.Unsafe.{instance => unsafe}
+import java.io.{InputStream, OutputStream}
 
 // TODO macro for various bits?
 trait UnsafeTable {
@@ -9,9 +12,64 @@ trait UnsafeTable {
   def remove(index: Long, tag: Long): Boolean
   def find(index: Long, tag: Long): Boolean
   def dispose(): Unit
+
+  protected def readPtrFrom(in : InputStream, ptr : Long, numBytes : Long ): Unit ={
+    val din = new DataInputStream(in)
+    var n = 0L
+    while (n + 8 <= numBytes ) {
+      val l = din.readLong()
+      unsafe.putLong(ptr + n, l)
+      n += 8
+    }
+    while(n < numBytes){
+      val b = din.readByte()
+      unsafe.putByte(ptr + n, b)
+      n += 1
+    }
+  }
+  protected def writePtrTo( out : OutputStream, ptr : Long, numBytes : Long): Unit = {
+    val dout = new DataOutputStream(out)
+    var n = 0L
+    while( n + 8 <= numBytes){
+      val l = unsafe.getLong(ptr + n)
+      dout.writeLong(l)
+      n += 8
+    }
+    while(n < numBytes){
+      val b = unsafe.getByte(ptr + n)
+      dout.writeByte(b.toInt)
+      n += 1
+    }
+  }
+
+  protected def toSerializedForm(bytesPerBucket : Int, numberOfBuckets : Long) : AnyRef = new UnsafeTable.SerializedForm(bytesPerBucket, numberOfBuckets, this)
+
+  def writeTo(out : OutputStream) : Unit
+  def readFrom(in : InputStream) : Unit
 }
 
-class UnsafeTable8Bit(val numberOfBuckets: Long) {
+object UnsafeTable{
+  @SerialVersionUID(1L)
+  private class SerializedForm(bytesPerBucket : Int, numberOfBuckets : Long, @transient var unsafeTable : UnsafeTable ) extends Serializable{
+    private def writeObject( oos : ObjectOutputStream ): Unit = {
+      oos.defaultWriteObject()
+      unsafeTable.writeTo(oos)
+    }
+    private def readObject( ois : ObjectInputStream ): Unit = {
+      ois.defaultReadObject()
+      unsafeTable = bytesPerBucket match{
+        case 8 => new UnsafeTable8Bit(numberOfBuckets)
+        case 16 => new UnsafeTable16Bit(numberOfBuckets)
+      }
+      unsafeTable.readFrom(ois)
+    }
+    @throws(classOf[java.io.ObjectStreamException])
+    /*private*/ def readResolve : AnyRef = unsafeTable
+  }
+}
+
+@SerialVersionUID(1L)
+class UnsafeTable8Bit(val numberOfBuckets: Long) extends UnsafeTable with Serializable{
 
   import UnsafeTable8Bit._
 
@@ -84,6 +142,16 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) {
     false
   }
 
+  def writeTo(out : OutputStream): Unit ={
+    writePtrTo(out, ptr, bytesPerBucket * numberOfBuckets)
+  }
+  def readFrom(in : InputStream): Unit ={
+    readPtrFrom(in, ptr, bytesPerBucket * numberOfBuckets)
+  }
+
+  @throws(classOf[java.io.ObjectStreamException])
+  /*private*/ def writeReplace : AnyRef = toSerializedForm(8, numberOfBuckets)
+
   def dispose(): Unit = unsafe.freeMemory(ptr)
 }
 
@@ -97,7 +165,8 @@ object UnsafeTable8Bit {
 }
 
 
-class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
+@SerialVersionUID(1)
+class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable with Serializable{
 
   import UnsafeTable16Bit._
 
@@ -168,6 +237,16 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable {
     }
     false
   }
+
+  def writeTo(out : OutputStream): Unit ={
+    writePtrTo(out, ptr, bytesPerBucket * numberOfBuckets)
+  }
+  def readFrom(in : InputStream): Unit ={
+    readPtrFrom(in, ptr, bytesPerBucket * numberOfBuckets)
+  }
+
+  @throws(classOf[java.io.ObjectStreamException])
+  /*private*/ def writeReplace : AnyRef = toSerializedForm(16, numberOfBuckets)
 
   def dispose(): Unit = unsafe.freeMemory(ptr)
 }
