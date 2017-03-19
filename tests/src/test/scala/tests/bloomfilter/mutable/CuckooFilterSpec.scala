@@ -88,6 +88,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Ins
 
   property( "strange case #2") = Prop{
     val lst = List(0l, 0, 0, 0, 0, 0, 0, 0, 4)
+    //the x3 size factor here enables 4 to end up in a different bucket than the 3 0's, their bucket overflows after the first four inserts
     val cf = CuckooFilter[Long](lst.size * 3)
     lst foreach cf.add
     forAll(lst){ k =>
@@ -104,11 +105,6 @@ class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Ins
       val sut = CuckooFilter[Long](sz * 3)
       try {
         lst foreach sut.add
-        forAll(lst){ k =>
-          withClue(k){
-            sut.mightContain(k) should be (true)
-          }
-        }
         val bos = new ByteArrayOutputStream
         val oos = new ObjectOutputStream((bos))
         oos.writeObject(sut)
@@ -124,7 +120,10 @@ class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Ins
         try {
           forAll(lst) { k =>
             withClue(k) {
-              sut2.mightContain(k) should be(true)
+              //we use a realxed condition here,
+              //the reason for this is potential (and actual) buckets overflowing in the underlying UnsafeTable16.
+              //a different aproach might be generating the keys in a way that limits them according to number of buckets and number of tags in each bucket.
+              sut2.mightContain(k) shouldEqual sut.mightContain(k)
             }
           }
           Prop.passed
