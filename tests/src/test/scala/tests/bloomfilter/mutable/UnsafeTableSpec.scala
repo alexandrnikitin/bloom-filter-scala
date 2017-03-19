@@ -2,6 +2,7 @@ package tests.bloomfilter.mutable
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
+import bloomfilter.CanGenerateHashFrom
 import bloomfilter.mutable.{UnsafeTable, UnsafeTable16Bit, UnsafeTable8Bit}
 import org.scalacheck.Test.Parameters
 import org.scalacheck.commands.Commands
@@ -70,7 +71,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") with Matchers with P
   class UnsafeTableInsertFindCommands extends Commands {
     type Sut = UnsafeTable8Bit
 
-    case class State(numberOfBuckets: Long, addedItems: Long)
+    case class State(numberOfBuckets: Long, addedItems: Long, bucketsPopulation : Map[Long, Int])
 
     override def canCreateNewSut(
         newState: State,
@@ -83,7 +84,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") with Matchers with P
       sut.dispose()
 
     override def genInitialState: Gen[State] =
-      Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0))
+      Gen.chooseNum[Long](1, /*Int.MaxValue * 2L*/ 1000).map(State(_, 0, Map.empty))
 
     override def newSut(state: State): Sut =
       new UnsafeTable8Bit(state.numberOfBuckets)
@@ -98,8 +99,16 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") with Matchers with P
 
     case class Insert(index: Long, tag: Byte) extends UnitCommand {
       def run(sut: Sut): Unit = sut.synchronized(sut.insert(index, tag))
-      def nextState(state: State): State =  state.copy(addedItems = state.addedItems + 1)
-      def preCondition(state: State): Boolean = state.addedItems < state.numberOfBuckets || state.addedItems < 4
+      def nextState(state: State): State =  {
+        val nextBucketsPopulation = state.bucketsPopulation.updated(index, prevBucketPopulation(state) + 1)
+        state.copy(addedItems = state.addedItems + 1, bucketsPopulation = nextBucketsPopulation)
+      }
+
+      def prevBucketPopulation( state : State) = state.bucketsPopulation.getOrElse(index, 0)
+
+      def preCondition(state: State): Boolean =
+        (prevBucketPopulation(state) < UnsafeTable8Bit.TagsPerBucket) &&
+        (state.addedItems < state.numberOfBuckets || state.addedItems < 4)
       def postCondition(state: State, success: Boolean): Prop = success
     }
 
