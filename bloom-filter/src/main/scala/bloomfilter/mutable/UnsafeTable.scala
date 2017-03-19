@@ -174,13 +174,13 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable with Seria
   unsafe.setMemory(ptr, bytesPerBucket * numberOfBuckets, 0.toByte)
 
   def readTag(bucketIndex: Long, tagIndex: Int): Long = {
-    val p = ptr + bucketIndex * bytesPerBucket + (tagIndex >> 1)
+    val p = ptr + bucketIndex * bytesPerBucket + (tagIndex << 1)
     val tag = unsafe.getShort(p)
     tag & tagMask
   }
 
   def writeTag(bucketIndex: Long, tagIndex: Int, tag: Long): Unit = {
-    val p = ptr + bucketIndex * bytesPerBucket + (tagIndex >> 1)
+    val p = ptr + bucketIndex * bytesPerBucket + (tagIndex << 1)
     unsafe.putShort(p, (tag & tagMask).toShort)
   }
 
