@@ -20,9 +20,9 @@ before_cache:
   - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
   - find $HOME/.sbt -name "*.lock" -delete
 before_install:
-- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secring.gpg.enc -out local.secring.gpg -d
-- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in pubring.gpg.enc -out local.pubring.gpg -d
-- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in credentials.sbt.enc -out local.credentials.sbt -d
+- "if [[ $TRAVIS_TAG == v[0-9.]* ]]; then openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secring.gpg.enc -out local.secring.gpg -d; fi"
+- "if [[ $TRAVIS_TAG == v[0-9.]* ]]; then openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in pubring.gpg.enc -out local.pubring.gpg -d; fi"
+- "if [[ $TRAVIS_TAG == v[0-9.]* ]]; then openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in credentials.sbt.enc -out local.credentials.sbt -d; fi"
 after_success:
 - "[[ $TRAVIS_TAG == v[0-9.]* ]] && { sbt ++$TRAVIS_SCALA_VERSION publishSigned sonatypeRelease; };"
 env:
