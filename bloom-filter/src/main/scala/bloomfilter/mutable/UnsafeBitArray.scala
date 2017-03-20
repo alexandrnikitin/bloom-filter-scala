@@ -5,18 +5,17 @@ import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
 import scala.concurrent.util.Unsafe.{instance => unsafe}
 
 class UnsafeBitArray(val numberOfBits: Long) {
-  private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
-  private val ptr = unsafe.allocateMemory(8L * indices)
-  unsafe.setMemory(ptr, 8L * indices, 0.toByte)
-
+  private val indices = math.ceil(numberOfBits.toDouble / 8).toLong
+  private val ptr = unsafe.allocateMemory(indices)
+  unsafe.setMemory(ptr, indices, 0.toByte)
   def get(index: Long): Boolean = {
-    (unsafe.getLong(ptr + (index >>> 6) * 8L) & (1L << index)) != 0
+    (unsafe.getByte(ptr + (index >>> 3)) & (1L << (index & 0x7))) != 0
   }
 
   def set(index: Long): Unit = {
-    val offset = ptr + (index >>> 6) * 8L
-    val long = unsafe.getLong(offset)
-    unsafe.putLong(offset, long | (1L << index))
+    val offset = ptr + (index >>> 3)
+    val value = unsafe.getByte(offset)
+    unsafe.putByte(offset, (value | (1L << (index & 0x7))).toByte)
   }
 
   def combine(that: UnsafeBitArray, combiner: (Long, Long) => Long): UnsafeBitArray = {
