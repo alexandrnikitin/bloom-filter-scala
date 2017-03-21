@@ -1,3 +1,7 @@
+### 0.9.0
+
+- \#23 Serialization support (via \#25). Thanks to Eyal Farago @eyalfa.
+
 ### 0.8.0
 
 - \#19 Cuckoo Filter (via \#20)
