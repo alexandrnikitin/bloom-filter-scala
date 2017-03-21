@@ -70,7 +70,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable{
   }
 
   @throws(classOf[java.io.ObjectStreamException])
-  /*private*/ def writeReplace : AnyRef = new UnsafeBitArray.SerializedForm(this)
+  private def writeReplace : AnyRef = new UnsafeBitArray.SerializedForm(this)
 
 //  private def
 
@@ -92,6 +92,6 @@ object UnsafeBitArray{
       unsafeBitArray.readFrom(ois)
     }
     @throws(classOf[java.io.ObjectStreamException])
-    /*private*/ def readResolve : AnyRef = unsafeBitArray
+    private def readResolve : AnyRef = unsafeBitArray
   }
 }

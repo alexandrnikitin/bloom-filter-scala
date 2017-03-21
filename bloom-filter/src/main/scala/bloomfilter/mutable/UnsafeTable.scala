@@ -64,7 +64,7 @@ object UnsafeTable{
       unsafeTable.readFrom(ois)
     }
     @throws(classOf[java.io.ObjectStreamException])
-    /*private*/ def readResolve : AnyRef = unsafeTable
+    private def readResolve : AnyRef = unsafeTable
   }
 }
 
@@ -150,7 +150,7 @@ class UnsafeTable8Bit(val numberOfBuckets: Long) extends UnsafeTable with Serial
   }
 
   @throws(classOf[java.io.ObjectStreamException])
-  /*private*/ def writeReplace : AnyRef = toSerializedForm(8, numberOfBuckets)
+  private def writeReplace : AnyRef = toSerializedForm(8, numberOfBuckets)
 
   def dispose(): Unit = unsafe.freeMemory(ptr)
 }
@@ -246,7 +246,7 @@ class UnsafeTable16Bit(val numberOfBuckets: Long) extends UnsafeTable with Seria
   }
 
   @throws(classOf[java.io.ObjectStreamException])
-  /*private*/ def writeReplace : AnyRef = toSerializedForm(16, numberOfBuckets)
+  private def writeReplace : AnyRef = toSerializedForm(16, numberOfBuckets)
 
   def dispose(): Unit = unsafe.freeMemory(ptr)
 }
