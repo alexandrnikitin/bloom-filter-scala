@@ -174,49 +174,4 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") with Matchers with P
   property("UnsafeTable8Bit supports java serialization") = serializationProp( new UnsafeTable8Bit(_) )
   property("UnsafeTable16Bit supports java serialization") = serializationProp( new UnsafeTable16Bit(_) )
 
-  property("8 bits tables supports java serialization") = {
-    val gen = for{
-      numBuckets <- Gen.posNum[Int]
-      numPopulated <- Gen.choose(0, numBuckets)
-      m <- Gen.mapOfN(numPopulated, Gen.zip(Gen.choose(0, numBuckets - 1), Arbitrary.arbByte.arbitrary))
-    } yield {
-      numBuckets -> m
-    }
-    val ptrAccessor = PrivateMethod[Long]('ptr)
-    def ptrOf( unsaffeTable8Bit : UnsafeTable8Bit) = unsaffeTable8Bit invokePrivate ptrAccessor()
-    Prop.forAllNoShrink(gen){ case (numBuckets, tags) =>
-        val sut = new UnsafeTable8Bit(numberOfBuckets = numBuckets)
-        try {
-          for {
-            (idx, tag) <- tags
-          } {
-            sut.insert(idx, tag)
-          }
-          val bos = new ByteArrayOutputStream
-          val oos = new ObjectOutputStream((bos))
-          oos.writeObject(sut)
-          oos.close()
-          val bis = new ByteArrayInputStream(bos.toByteArray)
-          val ois = new ObjectInputStream(bis)
-          val deserialized = ois.readObject()
-          ois.close()
-
-          deserialized should not be null
-          deserialized should be (a[UnsafeTable8Bit])
-          val sut2 = deserialized.asInstanceOf[UnsafeTable8Bit]
-          ptrOf(sut2) should not be 0
-          ptrOf(sut2) should not equal ptrOf(sut)
-          try {
-            for{
-              idx <- 0 until numBuckets
-              tagIdx <- 0 until UnsafeTable8Bit.TagsPerBucket
-            }{
-              sut.readTag(idx, tagIdx) shouldEqual sut2.readTag(idx, tagIdx)
-            }
-            Prop.passed
-          } finally sut2.dispose()
-        } finally sut.dispose()
-    }
-  }
-
 }
