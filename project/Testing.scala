@@ -9,7 +9,8 @@ object Testing {
 
   private lazy val testSettings = Seq(
     fork in Test := false,
-    parallelExecution in Test := false
+    parallelExecution in Test := false,
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "2")
   )
 
   private lazy val e2eSettings = inConfig(EndToEndTest)(Defaults.testSettings) ++ Seq(

@@ -5,8 +5,9 @@ import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
 import bloomfilter.CanGenerate128HashFrom
 import bloomfilter.mutable.UnsafeBitArray
 
+@SerialVersionUID(1L)
 class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
-    (implicit canGenerateHash: CanGenerate128HashFrom[T]) {
+    (implicit canGenerateHash: CanGenerate128HashFrom[T]) extends Serializable {
 
   def this(numberOfBits: Long, numberOfHashes: Int)(implicit canGenerateHash: CanGenerate128HashFrom[T]) {
     this(numberOfBits, numberOfHashes, new UnsafeBitArray(numberOfBits))

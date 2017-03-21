@@ -1,12 +1,15 @@
 package tests.bloomfilter.mutable
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+
 import bloomfilter.CanGenerateHashFrom
-import bloomfilter.mutable.CuckooFilter
+import bloomfilter.mutable.{CuckooFilter, UnsafeTable8Bit}
 import org.scalacheck.Test.Parameters
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
+import org.scalatest.{Inspectors, Matchers}
 
-class CuckooFilterSpec extends Properties("CuckooFilter") {
+class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Inspectors {
 
   property("for Long") = new CuckooFilterCommands[Long].property()
   property("for String") = new CuckooFilterCommands[String].property()
@@ -71,6 +74,62 @@ class CuckooFilterSpec extends Properties("CuckooFilter") {
       def postCondition(state: State, result: Boolean): Prop = result
     }
 
+  }
+
+  property( "strange case") = Prop{
+    val lst = List(-1l, 0l)
+    val cf = CuckooFilter[Long](lst.size)
+    lst foreach cf.add
+    forAll(lst){ k =>
+      (cf mightContain k) should be (true)
+    }
+    true
+  }
+
+  property( "strange case #2") = Prop{
+    val lst = List(0l, 0, 0, 0, 0, 0, 0, 0, 4)
+    //the x3 size factor here enables 4 to end up in a different bucket than the 3 0's, their bucket overflows after the first four inserts
+    val cf = CuckooFilter[Long](lst.size * 3)
+    lst foreach cf.add
+    forAll(lst){ k =>
+      (cf mightContain k) should be (true)
+    }
+    true
+  }
+
+  property("supports java serialization") = {
+    val gen = Gen.listOf(Arbitrary.arbLong.arbitrary)
+    Prop.forAll/*NoShrink*/(gen){ lst =>
+      val sz = lst.size max 1
+      //we add n x3 factor to reduce probability for buckets overflowing during inserts
+      val sut = CuckooFilter[Long](sz * 3)
+      try {
+        lst foreach sut.add
+        val bos = new ByteArrayOutputStream
+        val oos = new ObjectOutputStream((bos))
+        oos.writeObject(sut)
+        oos.close()
+        val bis = new ByteArrayInputStream(bos.toByteArray)
+        val ois = new ObjectInputStream(bis)
+        val deserialized = ois.readObject()
+        ois.close()
+
+        deserialized should not be null
+        deserialized should be (a[CuckooFilter[Long]])
+        val sut2 = deserialized.asInstanceOf[CuckooFilter[Long]]
+        try {
+          forAll(lst) { k =>
+            withClue(k) {
+              //we use a realxed condition here,
+              //the reason for this is potential (and actual) buckets overflowing in the underlying UnsafeTable16.
+              //a different aproach might be generating the keys in a way that limits them according to number of buckets and number of tags in each bucket.
+              sut2.mightContain(k) shouldEqual sut.mightContain(k)
+            }
+          }
+          Prop.passed
+        } finally sut2.dispose()
+      } finally sut.dispose()
+    }
   }
 
 }

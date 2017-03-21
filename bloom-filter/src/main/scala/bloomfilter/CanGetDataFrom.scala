@@ -9,7 +9,7 @@ trait CanGetDataFrom[-From] {
 
 object CanGetDataFrom {
 
-  implicit object CanGetDataFromByteArray extends CanGetDataFrom[Array[Byte]] {
+  implicit case object CanGetDataFromByteArray extends CanGetDataFrom[Array[Byte]] {
 
     override def getLong(buf: Array[Byte], offset: Int): Long = {
       (buf(offset + 7).toLong << 56) |
@@ -27,7 +27,7 @@ object CanGetDataFrom {
     }
   }
 
-  implicit object CanGetDataFromArrayChar extends CanGetDataFrom[Array[Char]] {
+  implicit case object CanGetDataFromArrayChar extends CanGetDataFrom[Array[Char]] {
 
     override def getLong(from: Array[Char], offset: Int): Long = {
       unsafe.getLong(from, offset.toLong)

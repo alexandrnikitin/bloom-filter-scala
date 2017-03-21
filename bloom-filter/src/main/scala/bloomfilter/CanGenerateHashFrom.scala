@@ -8,16 +8,16 @@ trait CanGenerateHashFrom[From] {
 
 object CanGenerateHashFrom {
 
-  implicit object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
+  implicit case object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
     override def generateHash(from: Long): Long = from
   }
 
-  implicit object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
+  implicit case object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
     override def generateHash(from: Array[Byte]): Long =
       MurmurHash3Generic.murmurhash3_x64_64(from, 0, from.length, 0)
   }
 
-  implicit object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
+  implicit case object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
 
     import scala.concurrent.util.Unsafe.{instance => unsafe}
 
