@@ -3,7 +3,7 @@ package tests.bloomfilter.mutable
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
 import bloomfilter.CanGenerateHashFrom
-import bloomfilter.mutable.{CuckooFilter, UnsafeTable8Bit}
+import bloomfilter.mutable.CuckooFilter
 import org.scalacheck.Test.Parameters
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
@@ -57,7 +57,8 @@ class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Ins
 
     case class RemoveItem(item: T) extends SuccessCommand {
       type Result = Boolean
-      def run(sut: Sut): Boolean = sut.synchronized{
+
+      def run(sut: Sut): Boolean = sut.synchronized {
         sut.remove(item)
         !sut.mightContain(item)
       }
@@ -76,37 +77,33 @@ class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Ins
 
   }
 
-  property( "strange case") = Prop{
+  property("strange case") = Prop {
     val lst = List(-1l, 0l)
     val cf = CuckooFilter[Long](lst.size)
-    lst foreach cf.add
-    forAll(lst){ k =>
-      (cf mightContain k) should be (true)
-    }
-    true
+    lst.foreach(cf.add)
+
+    lst.forall(cf.mightContain)
   }
 
-  property( "strange case #2") = Prop{
+  property("strange case #2") = Prop {
     val lst = List(0l, 0, 0, 0, 0, 0, 0, 0, 4)
     //the x3 size factor here enables 4 to end up in a different bucket than the 3 0's, their bucket overflows after the first four inserts
     val cf = CuckooFilter[Long](lst.size * 3)
-    lst foreach cf.add
-    forAll(lst){ k =>
-      (cf mightContain k) should be (true)
-    }
-    true
+    lst.foreach(cf.add)
+
+    lst.forall(cf.mightContain)
   }
 
   property("supports java serialization") = {
     val gen = Gen.listOf(Arbitrary.arbLong.arbitrary)
-    Prop.forAll/*NoShrink*/(gen){ lst =>
-      val sz = lst.size max 1
+    Prop.forAll(gen) { lst =>
+      val sz = math.max(lst.size, 1)
       //we add n x3 factor to reduce probability for buckets overflowing during inserts
       val sut = CuckooFilter[Long](sz * 3)
       try {
         lst foreach sut.add
         val bos = new ByteArrayOutputStream
-        val oos = new ObjectOutputStream((bos))
+        val oos = new ObjectOutputStream(bos)
         oos.writeObject(sut)
         oos.close()
         val bis = new ByteArrayInputStream(bos.toByteArray)
@@ -115,7 +112,7 @@ class CuckooFilterSpec extends Properties("CuckooFilter") with Matchers with Ins
         ois.close()
 
         deserialized should not be null
-        deserialized should be (a[CuckooFilter[Long]])
+        deserialized should be(a[CuckooFilter[Long]])
         val sut2 = deserialized.asInstanceOf[CuckooFilter[Long]]
         try {
           forAll(lst) { k =>

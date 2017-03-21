@@ -3,8 +3,8 @@ package tests.bloomfilter.mutable
 import java.io._
 
 import bloomfilter.mutable.BloomFilter
-import org.scalacheck.{Gen, Properties}
 import org.scalacheck.Prop.forAll
+import org.scalacheck.{Gen, Properties}
 import org.scalatest.Matchers
 
 class BloomFilterSerializationSpec extends Properties("BloomFilter") with Matchers {
@@ -14,7 +14,7 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") with Matche
 
   val gen = for {
     size <- Gen.oneOf[Long](1, 1000 /*, Int.MaxValue.toLong + 1*/)
-    indices <- genListElems[Long](size)(Gen.chooseNum(0, size))
+    indices <- genListElems[Long](size)(Gen.chooseNum(0, size - 1))
   } yield (size, indices)
 
   property("writeTo & readFrom") = forAll(gen) {
@@ -40,7 +40,6 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") with Matche
   }
 
   property("supports java serialization") = {
-    import org.scalacheck.Shrink.shrinkAny
     forAll(gen) {
       case (size, indices) =>
         val initial = BloomFilter[Long](size, 0.01)
