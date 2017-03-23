@@ -12,6 +12,11 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     this(numberOfBits, numberOfHashes, new UnsafeBitArray(numberOfBits))
   }
 
+ /** Add an item in the Bloom filter
+   *
+   * @param x the T item to add
+   * @return true if the item was not in the filter before, false otherwise
+   */
   def add(x: T): Unit = {
     val hash = canGenerateHash.generateHash(x)
     val hash1 = hash >>> 32
