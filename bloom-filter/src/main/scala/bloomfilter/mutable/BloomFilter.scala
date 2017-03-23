@@ -46,6 +46,7 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     val hash = canGenerateHash.generateHash(x)
     val hash1 = hash >>> 32
     val hash2 = (hash << 32) >> 32
+
     var i = 0
     while (i < numberOfHashes) {
       val computedHash = hash1 + i * hash2
