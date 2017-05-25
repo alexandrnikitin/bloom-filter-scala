@@ -2,8 +2,8 @@ import sbt.Keys._
 import sbt._
 
 object Dependencies {
-  private val scalatest = "org.scalatest" %% "scalatest" % "2.2.6" % "test;endToEnd"
-  private val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.3" % "test"
+  private val scalatest = "org.scalatest" %% "scalatest" % "3.0.3" % "test;endToEnd"
+  private val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.5" % "test"
   private val googleGuava = "com.google.guava" % "guava" % "19.0"
   private val googleFindbugs = "com.google.code.findbugs" % "jsr305" % "2.0.3" // needed by guava
   private val breeze = "org.scalanlp" %% "breeze" % "0.12"

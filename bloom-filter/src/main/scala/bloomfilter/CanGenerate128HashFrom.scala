@@ -15,7 +15,7 @@ object CanGenerate128HashFrom {
 
   implicit case object CanGenerate128HashFromString extends CanGenerate128HashFrom[String] {
 
-    import scala.concurrent.util.Unsafe.{instance => unsafe}
+    import bloomfilter.util.Unsafe.unsafe
 
     private val valueOffset = unsafe.objectFieldOffset(classOf[String].getDeclaredField("value"))
 

@@ -2,7 +2,7 @@ package sandbox.bloomfilter.mutable
 
 import net.openhft.chronicle.bytes.NativeBytesStore
 
-import scala.concurrent.util.Unsafe.{instance => unsafe}
+import bloomfilter.util.Unsafe.unsafe
 
 class ChronicleBitArray(numberOfBits: Long) {
   private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
