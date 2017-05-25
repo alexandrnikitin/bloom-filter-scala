@@ -1,3 +1,8 @@
+### 0.10.0
+
+- Performance improvement: set a bit only if it's not set already (via \#28)
+- \#22 Scala 2.12.1 support (via \#31). Thanks to Fedor Lavrentyev @fediq.
+
 ### 0.9.0
 
 - \#23 Serialization support (via \#25). Thanks to Eyal Farago @eyalfa.
