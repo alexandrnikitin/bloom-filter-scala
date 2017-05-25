@@ -28,6 +28,7 @@ object Settings {
     val base = Seq("-Xlint")
 
     def specificFor(scalaVersion: String) = CrossVersion.partialVersion(scalaVersion) match {
+      case Some((2, 12)) => Seq("-source", "1.8", "-target", "1.8")
       case Some((2, 11)) => Seq("-source", "1.8", "-target", "1.8")
       case Some((2, 10)) => Seq("-source", "1.7", "-target", "1.7")
       case _ => Nil
@@ -59,6 +60,7 @@ object Settings {
     )
 
     def strictSpecificFor(scalaVersion: String) = CrossVersion.partialVersion(scalaVersion) match {
+      case Some((2, 12)) => Seq("-Ywarn-unused", "-Ywarn-unused-import")
       case Some((2, 11)) => Seq("-Ywarn-unused", "-Ywarn-unused-import")
       case _ => Nil
     }
