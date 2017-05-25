@@ -25,7 +25,7 @@ object CanGenerateHashFrom {
 
     override def generateHash(from: String): Long = {
       val value = unsafe.getObject(from, valueOffset).asInstanceOf[Array[Char]]
-      MurmurHash3Generic.murmurhash3_x64_64(value, 0, from.length, 0)
+      MurmurHash3Generic.murmurhash3_x64_64(value, 0, from.length * 2, 0)
     }
   }
 
