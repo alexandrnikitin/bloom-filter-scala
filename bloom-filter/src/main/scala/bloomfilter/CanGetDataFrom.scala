@@ -28,13 +28,14 @@ object CanGetDataFrom {
   }
 
   implicit case object CanGetDataFromArrayChar extends CanGetDataFrom[Array[Char]] {
+    private val arrayCharOffset = unsafe.arrayBaseOffset(classOf[Array[Char]])
 
     override def getLong(from: Array[Char], offset: Int): Long = {
-      unsafe.getLong(from, offset.toLong)
+      unsafe.getLong(from, arrayCharOffset + offset.toLong)
     }
 
     override def getByte(from: Array[Char], offset: Int): Byte = {
-      unsafe.getByte(from, offset.toLong)
+      unsafe.getByte(from, arrayCharOffset + offset.toLong)
     }
   }
 }
