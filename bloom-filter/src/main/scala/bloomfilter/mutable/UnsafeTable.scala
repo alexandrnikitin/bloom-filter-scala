@@ -2,7 +2,7 @@ package bloomfilter.mutable
 
 import java.io._
 
-import scala.concurrent.util.Unsafe.{instance => unsafe}
+import bloomfilter.util.Unsafe.unsafe
 
 
 // TODO macro for various bits?

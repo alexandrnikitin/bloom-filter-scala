@@ -1,6 +1,6 @@
 package bloomfilter
 
-import scala.concurrent.util.Unsafe.{instance => unsafe}
+import bloomfilter.util.Unsafe.unsafe
 
 trait CanGetDataFrom[-From] {
   def getLong(from: From, offset: Int): Long

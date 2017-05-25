@@ -4,8 +4,8 @@ import sbt.Keys._
 object Settings {
 
   private lazy val build = Seq(
-    scalaVersion := "2.11.8",
-    crossScalaVersions := Seq("2.10.6", "2.11.8"),
+    scalaVersion := "2.12.2",
+    crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.2"),
 
     autoCompilerPlugins := true,
 
@@ -39,13 +39,13 @@ object Settings {
       "-deprecation",
       "-encoding", "UTF-8",
       "-feature",
-      "-unchecked",
-      "-optimise"
+      "-unchecked"
     )
 
     def specificFor(scalaVersion: String) = CrossVersion.partialVersion(scalaVersion) match {
-      case Some((2, 11)) => Seq("-target:jvm-1.8")
-      case Some((2, 10)) => Seq("-target:jvm-1.7")
+      case Some((2, 12)) => Seq("-target:jvm-1.8")
+      case Some((2, 11)) => Seq("-target:jvm-1.8", "-optimise")
+      case Some((2, 10)) => Seq("-target:jvm-1.7", "-optimise")
       case _ => Nil
     }
 
