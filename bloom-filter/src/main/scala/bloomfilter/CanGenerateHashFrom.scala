@@ -9,7 +9,7 @@ trait CanGenerateHashFrom[From] {
 object CanGenerateHashFrom {
 
   implicit case object CanGenerateHashFromLong extends CanGenerateHashFrom[Long] {
-    override def generateHash(from: Long): Long = from
+    override def generateHash(from: Long): Long = MurmurHash3Generic.fmix64(from)
   }
 
   implicit case object CanGenerateHashFromByteArray extends CanGenerateHashFrom[Array[Byte]] {
