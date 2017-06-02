@@ -1,3 +1,6 @@
+### 0.10.1
+- Change the default long hash function to MurMurHash3 (via \#33)
+
 ### 0.10.0
 
 - Performance improvement: set a bit only if it's not set already (via \#28)
