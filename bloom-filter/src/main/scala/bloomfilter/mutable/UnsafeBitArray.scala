@@ -10,6 +10,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
   @transient
   private val ptr = unsafe.allocateMemory(8L * indices)
   unsafe.setMemory(ptr, 8L * indices, 0.toByte)
+  private var bitCount = 0L
 
   def get(index: Long): Boolean = {
     (unsafe.getLong(ptr + (index >>> 6) * 8L) & (1L << index)) != 0
@@ -20,6 +21,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
     val long = unsafe.getLong(offset)
     if ((long & (1L << index)) == 0) {
       unsafe.putLong(offset, long | (1L << index))
+      bitCount += 1
     }
   }
 
@@ -49,7 +51,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
   }
 
   def getBitCount: Long = {
-    throw new NotImplementedError("Not implemented yet")
+    bitCount
   }
 
   def writeTo(out: OutputStream): Unit = {

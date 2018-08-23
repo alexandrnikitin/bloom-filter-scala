@@ -1,6 +1,7 @@
 package bloomfilter.mutable
 
 import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
+import scala.math._
 
 import bloomfilter.CanGenerateHashFrom
 
@@ -62,6 +63,12 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     bits.writeTo(out)
   }
 
+  def approximateElementCount(): Long = {
+    val bitCount = bits.getBitCount
+
+    val fractionOfBitsSet = (bitCount / numberOfBits).toDouble
+    return round(-log1p(-(fractionOfBitsSet)) * numberOfBits / numberOfHashes)
+  }
 
   def dispose(): Unit = bits.dispose()
 
