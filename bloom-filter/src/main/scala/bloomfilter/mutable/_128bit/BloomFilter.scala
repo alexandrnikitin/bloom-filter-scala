@@ -5,7 +5,9 @@ import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
 import bloomfilter.CanGenerate128HashFrom
 import bloomfilter.mutable.UnsafeBitArray
 
-@SerialVersionUID(1L)
+import scala.math._
+
+@SerialVersionUID(2L)
 class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
     (implicit canGenerateHash: CanGenerate128HashFrom[T]) extends Serializable {
 
@@ -46,6 +48,12 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     dout.writeLong(numberOfBits)
     dout.writeInt(numberOfHashes)
     bits.writeTo(out)
+  }
+
+  def approximateElementCount(): Long = {
+    val bitCount = bits.getBitCount
+    val fractionOfBitsSet = (bitCount / numberOfBits).toDouble
+    return round(-log1p(-(fractionOfBitsSet)) * numberOfBits / numberOfHashes)
   }
 
   def dispose(): Unit = bits.dispose()
