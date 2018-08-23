@@ -65,7 +65,6 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
 
   def approximateElementCount(): Long = {
     val bitCount = bits.getBitCount
-
     val fractionOfBitsSet = bitCount.toDouble / numberOfBits
     return round(-log1p(-(fractionOfBitsSet)) * numberOfBits / numberOfHashes)
   }
