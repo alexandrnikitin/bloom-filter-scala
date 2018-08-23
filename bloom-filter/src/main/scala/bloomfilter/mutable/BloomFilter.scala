@@ -5,7 +5,7 @@ import scala.math._
 
 import bloomfilter.CanGenerateHashFrom
 
-@SerialVersionUID(1L)
+@SerialVersionUID(2L)
 class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) extends Serializable {
 
