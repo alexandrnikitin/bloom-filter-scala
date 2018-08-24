@@ -5,8 +5,9 @@ import java.io._
 import bloomfilter.mutable._128bit.BloomFilter
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Gen, Properties}
+import org.scalatest.Matchers
 
-class BloomFilterSerializationSpec extends Properties("BloomFilter") {
+class BloomFilterSerializationSpec extends Properties("BloomFilter") with Matchers {
   def genListElems[A](max: Long)(implicit aGen: Gen[A]): Gen[List[A]] = {
     Gen.posNum[Int].map(_ % max).flatMap(i => Gen.listOfN(math.min(i, Int.MaxValue).toInt, aGen))
   }
@@ -28,6 +29,8 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") {
       val in = new BufferedInputStream(new FileInputStream(file), 10 * 1000 * 1000)
       val sut = BloomFilter.readFrom[Long](in)
       in.close()
+
+      sut.approximateElementCount() shouldEqual initial.approximateElementCount()
 
       val result = indices.forall(sut.mightContain)
 

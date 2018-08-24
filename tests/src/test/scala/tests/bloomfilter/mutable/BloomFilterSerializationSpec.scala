@@ -30,6 +30,8 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") with Matche
       val sut = BloomFilter.readFrom[Long](in)
       in.close()
 
+      sut.approximateElementCount() shouldEqual initial.approximateElementCount()
+
       val result = indices.forall(sut.mightContain)
 
       file.delete()
@@ -62,6 +64,7 @@ class BloomFilterSerializationSpec extends Properties("BloomFilter") with Matche
 
         sut.numberOfBits shouldEqual initial.numberOfBits
         sut.numberOfHashes shouldEqual initial.numberOfHashes
+        sut.approximateElementCount() shouldEqual initial.approximateElementCount()
 
 
         val result = indices.forall(sut.mightContain)
