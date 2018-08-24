@@ -1,3 +1,6 @@
+### 0.11.0
+- BREAKING: Add approximateElementCount method that estimates number of added elements. Thanks to @SidWeng. It's a breaking change because it serializes one more field (via \#37 and \#38)
+
 ### 0.10.1
 - Change the default long hash function to MurMurHash3 (via \#33)
 
