@@ -1,11 +1,12 @@
 package bloomfilter.mutable
 
 import java.io.{DataInputStream, DataOutputStream, InputStream, OutputStream}
-import scala.math._
 
 import bloomfilter.CanGenerateHashFrom
 
-@SerialVersionUID(1L)
+import scala.math._
+
+@SerialVersionUID(2L)
 class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, private val bits: UnsafeBitArray)
     (implicit canGenerateHash: CanGenerateHashFrom[T]) extends Serializable {
 
@@ -64,10 +65,14 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
   }
 
   def approximateElementCount(): Long = {
-    val bitCount = bits.getBitCount
-
-    val fractionOfBitsSet = (bitCount / numberOfBits).toDouble
-    return round(-log1p(-(fractionOfBitsSet)) * numberOfBits / numberOfHashes)
+    val fractionOfBitsSet = bits.getBitCount.toDouble / numberOfBits
+    val x = -log1p(-fractionOfBitsSet) * numberOfBits / numberOfHashes
+    val z = rint(x)
+    if (abs(x - z) == 0.5) {
+      (x + Math.copySign(0.5, x)).toLong
+    } else {
+      z.toLong
+    }
   }
 
   def dispose(): Unit = bits.dispose()

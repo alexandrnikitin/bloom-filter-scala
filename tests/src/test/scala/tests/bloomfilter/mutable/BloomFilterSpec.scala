@@ -2,6 +2,8 @@ package tests.bloomfilter.mutable
 
 import bloomfilter.CanGenerateHashFrom
 import bloomfilter.mutable.BloomFilter
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Prop.forAll
 import org.scalacheck.Test.Parameters
 import org.scalacheck.commands.Commands
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
@@ -62,6 +64,19 @@ class BloomFilterSpec extends Properties("BloomFilter") {
       def postCondition(state: State, result: Boolean): Prop = result
     }
 
+  }
+
+  private val elemsToAddGen = for {
+    numberOfElemsToAdd <- Gen.chooseNum[Int](1, 1000)
+    elemsToAdd <- Gen.listOfN(numberOfElemsToAdd, arbitrary[Long])
+  } yield elemsToAdd
+
+  // TODO fix elemsToAddGen.filter() below, why Gen.listOfN above generates empty lists?
+  property("approximateElementCount") = forAll(elemsToAddGen.filter(x => x.size > 10 && x.toSet.size > 10)) { elemsToAdd: List[Long] =>
+    val bf = BloomFilter[Long](elemsToAdd.size * 10, 0.0001)
+    elemsToAdd.foreach(bf.add)
+    val numberOfUnique = elemsToAdd.toSet.size
+    math.abs(bf.approximateElementCount() - numberOfUnique) < numberOfUnique * 0.1
   }
 
 }

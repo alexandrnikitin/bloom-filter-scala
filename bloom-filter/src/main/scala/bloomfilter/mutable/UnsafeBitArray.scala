@@ -4,7 +4,7 @@ import java.io._
 
 import bloomfilter.util.Unsafe.unsafe
 
-@SerialVersionUID(1L)
+@SerialVersionUID(2L)
 class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
   private val indices = math.ceil(numberOfBits.toDouble / 64).toLong
   @transient
@@ -56,6 +56,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
 
   def writeTo(out: OutputStream): Unit = {
     val dout = new DataOutputStream(out)
+    dout.writeLong(bitCount)
     var index = 0L
     while (index < numberOfBits) {
       dout.writeLong(unsafe.getLong(this.ptr + (index >>> 6) * 8L))
@@ -65,6 +66,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
 
   def readFrom(in: InputStream): Unit = {
     val din = new DataInputStream(in)
+    bitCount = din.readLong()
     var index = 0L
     while (index < numberOfBits) {
       unsafe.putLong(this.ptr + (index >>> 6) * 8L, din.readLong())
