@@ -72,11 +72,11 @@ class BloomFilterSpec extends Properties("BloomFilter") {
   } yield elemsToAdd
 
   // TODO fix elemsToAddGen.filter() below, why Gen.listOfN above generates empty lists?
-  property("approximateElementCount") = forAll(elemsToAddGen.filter(x => x.size > 10)) { elemsToAdd: List[Long] =>
+  property("approximateElementCount") = forAll(elemsToAddGen.filter(x => x.size > 10 && x.toSet.size > 10)) { elemsToAdd: List[Long] =>
     val bf = BloomFilter[Long](elemsToAdd.size * 10, 0.0001)
     elemsToAdd.foreach(bf.add)
     val numberOfUnique = elemsToAdd.toSet.size
-    (bf.approximateElementCount() > numberOfUnique * 0.9) && (bf.approximateElementCount() < numberOfUnique * 1.1)
+    math.abs(bf.approximateElementCount() - numberOfUnique) < numberOfUnique * 0.1
   }
-  
+
 }
