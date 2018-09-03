@@ -34,7 +34,6 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
       val thatLong = unsafe.getLong(that.ptr + (index >>> 6) * 8L)
       val longAtIndex = combiner(thisLong, thatLong)
       unsafe.putLong(result.ptr + (index >>> 6) * 8L, longAtIndex)
-//      result.addBitCount(UnsafeBitArray.getSetBit(longAtIndex))
       if (longAtIndex > 0) {
         result.addBitCount(1)
       }
@@ -109,18 +108,5 @@ object UnsafeBitArray {
 
     @throws(classOf[java.io.ObjectStreamException])
     private def readResolve: AnyRef = unsafeBitArray
-  }
-
-  def getSetBit(i: Long): Long = {
-    @tailrec
-    def aux(i: Long, cnt: Long): Long = {
-      if (i == 0) {
-        cnt
-      } else {
-        aux(i & (i -1), cnt + 1)
-      }
-    }
-
-    aux(i, 0)
   }
 }
