@@ -3,6 +3,7 @@ package bloomfilter.mutable
 import java.io._
 
 import bloomfilter.util.Unsafe.unsafe
+import scala.annotation.tailrec
 
 @SerialVersionUID(2L)
 class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
