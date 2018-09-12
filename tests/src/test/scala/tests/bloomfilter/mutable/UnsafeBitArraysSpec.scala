@@ -49,7 +49,8 @@ class UnsafeBitArraysSpec extends Properties("UnsafeBitArray") {
       commonIndices.foreach(x => { array.set(x); thatArray.set(x) })
 
       val sut = array & thatArray
-      val result = commonIndices.forall(sut.get)
+      val result = commonIndices.forall(sut.get) &&
+        commonIndices.size == sut.getBitCount
 
       array.dispose()
       thatArray.dispose()
