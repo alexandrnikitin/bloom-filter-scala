@@ -2,7 +2,7 @@ import sbt.Keys._
 import sbt._
 
 object Dependencies {
-  private val scalatest = "org.scalatest" %% "scalatest" % "3.0.5" % "test;endToEnd"
+  private val scalatest = "org.scalatest" %% "scalatest" % "3.1.1" % "test;endToEnd"
   private val scalacheck = "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
   private val googleGuava = "com.google.guava" % "guava" % "19.0"
   private val googleFindbugs = "com.google.code.findbugs" % "jsr305" % "2.0.3" // needed by guava
