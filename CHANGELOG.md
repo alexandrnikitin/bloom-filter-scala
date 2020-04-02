@@ -1,3 +1,6 @@
+### 0.12.0
+- Add Scala 2.13 support (via \#45)
+
 ### 0.11.0
 - BREAKING: Add approximateElementCount method that estimates number of added elements. Thanks to @SidWeng. It's a breaking change because it serializes one more field (via \#37 and \#38)
 
