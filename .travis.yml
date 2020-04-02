@@ -1,13 +1,13 @@
 language: scala
 matrix:
   include:
-  - scala: 2.10.6
+  - scala: 2.10.7
     jdk: openjdk7
-    dist: precise
-  - scala: 2.11.8
+    dist: trusty
+  - scala: 2.11.12
     jdk: openjdk8
     dist: trusty
-  - scala: 2.12.2
+  - scala: 2.12.11
     jdk: openjdk8
     dist: xenial
   - scala: 2.13.1

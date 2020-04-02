@@ -5,7 +5,7 @@ object Settings {
 
   private lazy val build = Seq(
     scalaVersion := "2.12.2",
-    crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.2", "2.13.1"),
+    crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.11", "2.13.1"),
 
     autoCompilerPlugins := true,
 
