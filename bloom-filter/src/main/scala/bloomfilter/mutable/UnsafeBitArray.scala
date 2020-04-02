@@ -83,7 +83,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
 
 object UnsafeBitArray {
 
-  @SerialVersionUID(1l)
+  @SerialVersionUID(1L)
   private class SerializedForm(@transient var unsafeBitArray: UnsafeBitArray) extends Serializable {
     private def writeObject(oos: ObjectOutputStream): Unit = {
       oos.defaultWriteObject()
