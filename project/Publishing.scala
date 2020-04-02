@@ -20,7 +20,8 @@ object Publishing {
         Some("Snapshots" at nexus + "content/repositories/snapshots")
       else
         Some("Releases" at nexus + "service/local/staging/deploy/maven2")
-    }
+    },
+    sonatypeSessionName := "[sbt-sonatype] ${name.value}-${scalaBinaryVersion.value}-${version.value}"
   )
 
   private lazy val generalSettings = Seq(
