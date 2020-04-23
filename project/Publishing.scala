@@ -1,4 +1,3 @@
-import com.typesafe.sbt.pgp.PgpSettings._
 import sbt.Keys._
 import sbt._
 
@@ -11,13 +10,9 @@ object Publishing {
     } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
   )
 
-  private lazy val pgpSettings =
-    Option(System.getenv().get("PGP_PASSPHRASE"))
-        .map(s => pgpPassphrase := Some(s.toCharArray)).toSeq
-
   private lazy val sharedSettings = Seq(
     publishMavenStyle := true,
-    publishArtifact in Test := false,
+    Test / publishArtifact := false,
     pomIncludeRepository := Function.const(false),
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
@@ -35,7 +30,7 @@ object Publishing {
     developers := List(Developer("AlexandrNikitin", "Alexandr Nikitin", "nikitin.alexandr.a@gmail.com", url("https://github.com/alexandrnikitin/")))
   )
 
-  lazy val settings = generalSettings ++ sharedSettings ++ credentialSettings ++ pgpSettings
+  lazy val settings = generalSettings ++ sharedSettings ++ credentialSettings
 
   lazy val noPublishSettings = Seq(
     publish :=(),

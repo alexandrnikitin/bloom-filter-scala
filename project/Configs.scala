@@ -2,5 +2,5 @@ import sbt._
 
 object Configs {
   val EndToEndTest = config("endToEnd") extend Runtime
-  val all = Seq(EndToEndTest)
+  val all = EndToEndTest
 }

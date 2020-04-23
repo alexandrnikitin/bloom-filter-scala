@@ -8,21 +8,21 @@ object Testing {
   import Configs._
 
   private lazy val testSettings = Seq(
-    fork in Test := false,
-    parallelExecution in Test := false,
-    testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "2")
+    Test / fork := false,
+    Test / parallelExecution := false,
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "2")
   )
 
   private lazy val e2eSettings = inConfig(EndToEndTest)(Defaults.testSettings) ++ Seq(
-    fork in EndToEndTest := false,
-    parallelExecution in EndToEndTest := false,
-    scalaSource in EndToEndTest := baseDirectory.value / "src/endToEnd/scala"
+    EndToEndTest / fork := false,
+    EndToEndTest / parallelExecution := false,
+    EndToEndTest / scalaSource := baseDirectory.value / "src/endToEnd/scala"
   )
 
   private lazy val testAllSettings = Seq(
     testAll :=(),
-    testAll <<= testAll.dependsOn(test in EndToEndTest),
-    testAll <<= testAll.dependsOn(test in Test)
+    testAll := testAll.dependsOn(EndToEndTest / test),
+    testAll := testAll.dependsOn(Test / test)
   )
 
   private lazy val scoverageSettings = Seq(

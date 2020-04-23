@@ -2,7 +2,7 @@ language: scala
 matrix:
   include:
   - scala: 2.10.7
-    jdk: openjdk7
+    jdk: openjdk8
     dist: trusty
   - scala: 2.11.12
     jdk: openjdk8
