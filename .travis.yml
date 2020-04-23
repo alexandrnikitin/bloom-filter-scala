@@ -24,7 +24,7 @@ matrix:
     jdk: openjdk11
     dist: xenial
 script:
-- sbt ++$TRAVIS_SCALA_VERSION clean package
+- sbt ++$TRAVIS_SCALA_VERSION clean test endToEnd:test package
 sudo: false
 cache:
   directories:
