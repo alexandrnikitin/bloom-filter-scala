@@ -13,6 +13,12 @@ matrix:
   - scala: 2.13.1
     jdk: openjdk8
     dist: xenial
+  - scala: 2.13.1
+    jdk: openjdk10
+    dist: xenial
+  - scala: 2.13.1
+    jdk: openjdk11
+    dist: xenial
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean package
 sudo: false
