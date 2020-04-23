@@ -4,15 +4,19 @@ matrix:
   - scala: 2.10.7
     jdk: openjdk8
     dist: trusty
+    env: PUBLISH_FROM_THIS_BUILD=true
   - scala: 2.11.12
     jdk: openjdk8
     dist: trusty
+    env: PUBLISH_FROM_THIS_BUILD=true
   - scala: 2.12.11
     jdk: openjdk8
     dist: xenial
+    env: PUBLISH_FROM_THIS_BUILD=true
   - scala: 2.13.1
     jdk: openjdk8
     dist: xenial
+    env: PUBLISH_FROM_THIS_BUILD=true
   - scala: 2.13.1
     jdk: openjdk10
     dist: xenial
@@ -38,7 +42,7 @@ before_install:
 - "if [[ $TRAVIS_TAG == v[0-9.]* ]]; then openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in pubring.gpg.enc -out local.pubring.gpg -d; fi"
 - "if [[ $TRAVIS_TAG == v[0-9.]* ]]; then openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in credentials.sbt.enc -out local.credentials.sbt -d; fi"
 after_success:
-- "[[ $TRAVIS_TAG == v[0-9.]* ]] && { sbt ++$TRAVIS_SCALA_VERSION publishSigned sonatypeRelease; };"
+- "[[ $TRAVIS_TAG == v[0-9.]* ]] && [[ $PUBLISH_FROM_THIS_BUILD == true ]] && { sbt ++$TRAVIS_SCALA_VERSION publishSigned sonatypeRelease; };"
 env:
   global:
     secure: B67RlMiUwiHrqY0m8SVUrrR7VmAX3zEkyWbtJB1hdgfiffEmmLMhAWgO2nerzLPeLa5oz5LheLED7/klpJ2330xt5COrs2Ap8IsFC0Bd165ypNOvD/KrmnyZBvR7jROEyq7tj6w3e4hIgAFzzOddkNgs011o6mFWIYclujn5AZdsFLmlUT37IeXVjJm95wRFZuxyqNXKapVz11kDQdX/XPHST4oGgITA80UbtTdN+RB3Ye49v3yXiMzFyzlC70CBH2GLnH5D/BVWU2b2+FsfPlrSzL58n1GKp1EmB/piY/L889ExTRfdezecElAkzAK+Be/NRijRxPleTne81M/taG0zjJuWtahoSSlk2PaycXvJMZAVhaUKY8wc/U/RdNGtTAfJVKSeDZoyqpf4Px/lb2+6fIxmQzg8jt9teVdG18Z2f1J0EUDxFzHzR78TMYdPaVTg0Z9win/grvJWbGPj2ybu3440pjF/LLDyWbkXgkpLcs24tyB0iL4xuhr+VWNKgPeNqvj4po0fb1l4yD/DZAnzN9uCtOqiuq8YcRisAK/NYX5hO6xoSJZAqNjrk6BnSBQodg7MVnSZXnrkKvYb7DRK6VmsoFTHStNMW5S6d6VlciXKhn7jdGbVeowWN3Bc0NbrjcmB3jfWhFi4TjN5ce76/8KzLsnmumpGBy6UlQ0=
