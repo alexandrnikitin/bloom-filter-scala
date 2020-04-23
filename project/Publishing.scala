@@ -1,5 +1,6 @@
 import sbt.Keys._
 import sbt._
+import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Publishing {
 
