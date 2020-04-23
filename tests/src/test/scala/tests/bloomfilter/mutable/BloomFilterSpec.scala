@@ -16,7 +16,7 @@ class BloomFilterSpec extends Properties("BloomFilter") {
 
 
   override def overrideParameters(p: Parameters): Parameters = {
-    super.overrideParameters(p).withMinSuccessfulTests(1000)
+    super.overrideParameters(p).withMinSuccessfulTests(100)
   }
 
   class BloomFilterCommands[T: Arbitrary](implicit canGenerateHash: CanGenerateHashFrom[T]) extends Commands {

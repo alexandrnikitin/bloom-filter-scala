@@ -16,7 +16,7 @@ class UnsafeTableSpec extends Properties("UnsafeTableSpec") with Matchers with P
   property("insert & find") = new UnsafeTableInsertFindCommands().property()
 
   override def overrideParameters(p: Parameters): Parameters = {
-    super.overrideParameters(p).withMinSuccessfulTests(1000)
+    super.overrideParameters(p).withMinSuccessfulTests(100)
   }
 
   class UnsafeTableCommands extends Commands {

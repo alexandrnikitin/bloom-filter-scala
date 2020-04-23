@@ -14,7 +14,7 @@ class UnsafeBitArraySpec extends Properties("UnsafeBitArray") with Matchers with
   property("serializable") = serializationProp
 
   override def overrideParameters(p: Parameters): Parameters = {
-    super.overrideParameters(p).withMinSuccessfulTests(1000)
+    super.overrideParameters(p).withMinSuccessfulTests(100)
   }
 
   class UnsafeBitArrayCommands extends Commands {
