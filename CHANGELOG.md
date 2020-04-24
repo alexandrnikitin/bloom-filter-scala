@@ -1,3 +1,6 @@
+### 0.13.0
+- Add JDK 9+ support (via \#47) Thanks to Sean Rohead @seanrohead
+
 ### 0.12.0
 - Add Scala 2.13 support (via \#45)
 
