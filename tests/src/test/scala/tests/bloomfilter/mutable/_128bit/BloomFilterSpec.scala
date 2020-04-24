@@ -18,7 +18,7 @@ class BloomFilterSpec extends Properties("BloomFilter_128bit") with Matchers wit
 
 
   override def overrideParameters(p: Parameters): Parameters = {
-    super.overrideParameters(p).withMinSuccessfulTests(1000)
+    super.overrideParameters(p).withMinSuccessfulTests(100)
   }
 
   class BloomFilterCommands[T: Arbitrary](implicit canGenerateHash: CanGenerate128HashFrom[T]) extends Commands {
