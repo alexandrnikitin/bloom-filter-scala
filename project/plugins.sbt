@@ -6,7 +6,7 @@ addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.3.7")
 
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.2")
 
-addSbtPlugin("com.jsuereth" % "sbt-pgp" % "2.0.1")
+addSbtPlugin("io.crashbox" % "sbt-gpg" % "0.2.1")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.7.0")
 

@@ -1,5 +1,5 @@
-import sbt.Keys._
 import sbt._
+import sbt.Keys._
 import xerial.sbt.Sonatype.SonatypeKeys._
 
 object Publishing {
@@ -8,20 +8,21 @@ object Publishing {
     credentials ++= (for {
       username <- Option(System.getenv().get("SONATYPE_USERNAME"))
       password <- Option(System.getenv().get("SONATYPE_PASSWORD"))
-    } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq
+    } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
+    
+    credentials += Credentials(
+      "GnuPG Key ID",
+      "gpg",
+      "nikitin.alexandr.a@gmail.com", // key identifier
+      "ignored" // this field is ignored; passwords are supplied by pinentry
+    )
   )
 
   private lazy val sharedSettings = Seq(
     publishMavenStyle := true,
     Test / publishArtifact := false,
     pomIncludeRepository := Function.const(false),
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if (isSnapshot.value)
-        Some("Snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("Releases" at nexus + "service/local/staging/deploy/maven2")
-    },
+    publishTo := sonatypePublishToBundle.value,
     sonatypeSessionName := "[sbt-sonatype] ${name.value}-${scalaBinaryVersion.value}-${version.value}"
   )
 
@@ -35,9 +36,7 @@ object Publishing {
   lazy val settings = generalSettings ++ sharedSettings ++ credentialSettings
 
   lazy val noPublishSettings = Seq(
-    publish :=(),
-    publishLocal :=(),
-    publishArtifact := false
+    publish / skip := true
   )
 
 }
