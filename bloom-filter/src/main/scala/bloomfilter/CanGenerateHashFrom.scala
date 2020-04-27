@@ -21,6 +21,8 @@ object CanGenerateHashFrom {
   import bloomfilter.util.Unsafe.unsafe
 
   case object CanGenerateHashFromString extends CanGenerateHashFrom[String] {
+    private val valueOffset = unsafe.objectFieldOffset(stringValueField)
+
     override def generateHash(from: String): Long = {
       val value = unsafe.getObject(from, valueOffset).asInstanceOf[Array[Char]]
       MurmurHash3Generic.murmurhash3_x64_64(value, 0, from.length * 2, 0)
@@ -28,6 +30,8 @@ object CanGenerateHashFrom {
   }
 
   case object CanGenerateHashFromStringByteArray extends CanGenerateHashFrom[String] {
+    private val valueOffset = unsafe.objectFieldOffset(stringValueField)
+
     override def generateHash(from: String): Long = {
       val value = unsafe.getObject(from, valueOffset).asInstanceOf[Array[Byte]]
       MurmurHash3Generic.murmurhash3_x64_64(value, 0, from.length, 0)
@@ -35,8 +39,6 @@ object CanGenerateHashFrom {
   }
 
   private val stringValueField: Field = classOf[String].getDeclaredField("value")
-  private val valueOffset = unsafe.objectFieldOffset(stringValueField)
-
   implicit val canGenerateHashFromString: CanGenerateHashFrom[String] = {
     if (stringValueField.getType.getComponentType == java.lang.Byte.TYPE) CanGenerateHashFromStringByteArray else CanGenerateHashFromString
   }
