@@ -23,7 +23,9 @@ object CanGenerate128HashFrom {
 
   import bloomfilter.util.Unsafe.unsafe
 
-  case object CanGenerate128HashFromStringCharArray extends CanGenerate128HashFrom[String] {
+  case object CanGenerate128HashFromString extends CanGenerate128HashFrom[String] {
+    private val valueOffset = unsafe.objectFieldOffset(stringValueField)
+
     override def generateHash(from: String): (Long, Long) = {
       val value = unsafe.getObject(from, valueOffset).asInstanceOf[Array[Char]]
       MurmurHash3Generic.murmurhash3_x64_128(value, 0, from.length * 2, 0)
@@ -31,6 +33,8 @@ object CanGenerate128HashFrom {
   }
 
   case object CanGenerate128HashFromStringByteArray extends CanGenerate128HashFrom[String] {
+    private val valueOffset = unsafe.objectFieldOffset(stringValueField)
+
     override def generateHash(from: String): (Long, Long) = {
       val value = unsafe.getObject(from, valueOffset).asInstanceOf[Array[Byte]]
       MurmurHash3Generic.murmurhash3_x64_128(value, 0, from.length, 0)
@@ -38,9 +42,7 @@ object CanGenerate128HashFrom {
   }
 
   private val stringValueField: Field = classOf[String].getDeclaredField("value")
-  private val valueOffset = unsafe.objectFieldOffset(stringValueField)
-
   implicit val canGenerate128HashFromString: CanGenerate128HashFrom[String] = {
-    if (stringValueField.getType.getComponentType == java.lang.Byte.TYPE) CanGenerate128HashFromStringByteArray else CanGenerate128HashFromStringCharArray
+    if (stringValueField.getType.getComponentType == java.lang.Byte.TYPE) CanGenerate128HashFromStringByteArray else CanGenerate128HashFromString
   }
 }
