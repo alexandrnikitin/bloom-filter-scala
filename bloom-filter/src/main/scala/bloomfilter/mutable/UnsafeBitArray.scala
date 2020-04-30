@@ -3,6 +3,7 @@ package bloomfilter.mutable
 import java.io._
 
 import bloomfilter.util.Unsafe.unsafe
+import scala.annotation.tailrec
 
 @SerialVersionUID(2L)
 class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
@@ -33,6 +34,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
       val thatLong = unsafe.getLong(that.ptr + (index >>> 6) * 8L)
       val longAtIndex = combiner(thisLong, thatLong)
       unsafe.putLong(result.ptr + (index >>> 6) * 8L, longAtIndex)
+      result.addBitCount(UnsafeBitArray.getSetBit(longAtIndex))
       index += 64
     }
     result
@@ -48,6 +50,10 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
     require(this.numberOfBits == that.numberOfBits, "Bitwise AND works only on arrays with the same number of bits")
 
     combine(that, _ & _)
+  }
+
+  def addBitCount(i: Long): Unit = {
+    bitCount += i
   }
 
   def getBitCount: Long = {
@@ -102,4 +108,16 @@ object UnsafeBitArray {
     private def readResolve: AnyRef = unsafeBitArray
   }
 
+  def getSetBit(i: Long): Long = {
+    @tailrec
+    def aux(i: Long, cnt: Long): Long = {
+      if (i == 0) {
+        cnt
+      } else {
+        aux(i & (i -1), cnt + 1)
+      }
+    }
+
+    aux(i, 0)
+  }
 }
