@@ -33,6 +33,7 @@ class UnsafeBitArray(val numberOfBits: Long) extends Serializable {
       val thatLong = unsafe.getLong(that.ptr + (index >>> 6) * 8L)
       val longAtIndex = combiner(thisLong, thatLong)
       unsafe.putLong(result.ptr + (index >>> 6) * 8L, longAtIndex)
+      result.bitCount += java.lang.Long.bitCount(longAtIndex)
       index += 64
     }
     result
