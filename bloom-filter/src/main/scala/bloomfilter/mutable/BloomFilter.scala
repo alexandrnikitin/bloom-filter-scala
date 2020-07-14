@@ -14,17 +14,27 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     this(numberOfBits, numberOfHashes, new UnsafeBitArray(numberOfBits))
   }
 
+ /** Add an item in the Bloom filter
+   *
+   * @param x the T item to add
+   * @return true if the item was not in the filter before, false otherwise
+   */
   def add(x: T): Unit = {
     val hash = canGenerateHash.generateHash(x)
     val hash1 = hash >>> 32
     val hash2 = (hash << 32) >> 32
+    var was_defined = true
 
     var i = 0
     while (i < numberOfHashes) {
       val computedHash = hash1 + i * hash2
+      if (!bits.get((computedHash & Long.MaxValue) % numberOfBits))
+        was_defined = false
       bits.set((computedHash & Long.MaxValue) % numberOfBits)
       i += 1
     }
+
+    !was_defined
   }
 
   def union(that: BloomFilter[T]): BloomFilter[T] = {
@@ -43,6 +53,7 @@ class BloomFilter[T] private (val numberOfBits: Long, val numberOfHashes: Int, p
     val hash = canGenerateHash.generateHash(x)
     val hash1 = hash >>> 32
     val hash2 = (hash << 32) >> 32
+
     var i = 0
     while (i < numberOfHashes) {
       val computedHash = hash1 + i * hash2
