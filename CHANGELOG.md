@@ -1,5 +1,9 @@
+### 0.13.1
+- Fix deserialization backwards-compatibility with v0.12.0 (via \#52) Thanks to Sean Rohead @seanrohead
+
 ### 0.13.0
 - Add JDK 9+ support (via \#47) Thanks to Sean Rohead @seanrohead
+- BREAKING: breaks java serialization/deserialization compatibility with v0.12.0. Use v0.13.1.
 
 ### 0.12.0
 - Add Scala 2.13 support (via \#45)
